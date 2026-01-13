@@ -6,10 +6,12 @@ import { Observable, tap, switchMap, shareReplay } from 'rxjs';
 import { CervejaService } from '../../services/cerveja';
 import { Cerveja } from '../../models/cerveja';
 
+import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-cerveja-detalhe',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './cerveja-detalhe.html',
 })
 export class CervejaDetalheComponent {

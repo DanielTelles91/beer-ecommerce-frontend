@@ -1,3 +1,14 @@
+## Author
+
+Developed by Daniel Arantes Telles
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+
+
+
 # BeerEcommerceFrontend
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.5.

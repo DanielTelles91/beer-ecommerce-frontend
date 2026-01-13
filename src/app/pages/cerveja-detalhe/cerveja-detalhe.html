@@ -1,5 +1,7 @@
 <h2>Detalhe da Cerveja</h2>
 
+<button class="btn-voltar" routerLink="/cervejas">← Voltar</button>
+
 <div *ngIf="cerveja$ | async as cerveja; else carregando">
 
   <strong>{{ cerveja.rotulo }}</strong><br>
