@@ -5,10 +5,12 @@ import { Observable, interval } from 'rxjs';
 import { CervejaService } from '../../services/cerveja';
 import { Cerveja } from '../../models/cerveja';
 
+import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-cerveja-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './cerveja-list.html'
 })
 export class CervejaListComponent {

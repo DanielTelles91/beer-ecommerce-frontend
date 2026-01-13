@@ -4,7 +4,10 @@
 
 <ul>
   <li *ngFor="let c of (cervejas$ | async)">
-    <strong>{{ c.rotulo }}</strong><br>
+    
+    <a [routerLink]="['/cervejas', c.id]">
+      <strong>{{ c.rotulo }}</strong>
+    </a><br>
 
     <ng-container *ngIf="tick$ | async as t">
       <div class="imagens" *ngIf="getCurrentImage(c, t) as img">

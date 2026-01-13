@@ -1,0 +1,22 @@
+<h2>Detalhe da Cerveja</h2>
+
+<div *ngIf="cerveja$ | async as cerveja; else carregando">
+
+  <strong>{{ cerveja.rotulo }}</strong><br>
+  Cervejaria: {{ cerveja.cervejaria.cervejaria }}<br>
+  País: {{ cerveja.cervejaria.pais }}<br>
+  Preço: R$ {{ cerveja.preco }}<br><br>
+
+  <div *ngIf="imagens.length > 0" style="display:flex; align-items:center; gap:10px;">
+    <button (click)="anterior()">⬅</button>
+
+    <img [src]="getImagemUrl(cerveja)" width="300" />
+
+    <button (click)="proxima()">➡</button>
+  </div>
+
+</div>
+
+<ng-template #carregando>
+  <p>Carregando cerveja...</p>
+</ng-template>

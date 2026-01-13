@@ -12,5 +12,9 @@ export class CervejaService {
   listar() {
     return this.http.get<Cerveja[]>(this.apiUrl);
   }
+
+  buscarPorId(id: number) {
+  return this.http.get<Cerveja>(`${this.apiUrl}/${id}`);
+}
 }
 
