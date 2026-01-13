@@ -1,0 +1,18 @@
+<h2>Lista de Cervejas</h2>
+
+<p>Total: {{ (cervejas$ | async)?.length }}</p>
+
+<ul>
+  <li *ngFor="let c of (cervejas$ | async)">
+    <strong>{{ c.rotulo }}</strong><br>
+
+    <ng-container *ngIf="tick$ | async as t">
+      <div class="imagens" *ngIf="getCurrentImage(c, t) as img">
+        <img [src]="getImagemUrl(c, img)" width="180">
+      </div>
+    </ng-container>
+
+    Cervejaria: {{ c.cervejaria.cervejaria }}<br>
+    Preço: R$ {{ c.preco }}
+  </li>
+</ul>

@@ -1,3 +1,7 @@
 import { Routes } from '@angular/router';
+import { CervejaListComponent } from './pages/cerveja-list/cerveja-list';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  { path: '', redirectTo: 'cervejas', pathMatch: 'full' },
+  { path: 'cervejas', component: CervejaListComponent }
+];
