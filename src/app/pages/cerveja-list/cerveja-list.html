@@ -1,21 +1,55 @@
+<div style="margin-top: 80px;"></div>
+
 <h2>Lista de Cervejas</h2>
 
-<p>Total: {{ (cervejas$ | async)?.length }}</p>
+<ng-container *ngIf="cervejas$ | async as cervejas">
 
-<ul>
-  <li *ngFor="let c of (cervejas$ | async)">
-    
-    <a [routerLink]="['/cervejas', c.id]">
-      <strong>{{ c.rotulo }}</strong>
-    </a><br>
+  <p>Total: {{ cervejas.length }}</p>
 
-    <ng-container *ngIf="tick$ | async as t">
-      <div class="imagens" *ngIf="getCurrentImage(c, t) as img">
-        <img [src]="getImagemUrl(c, img)" width="180">
-      </div>
-    </ng-container>
 
-    Cervejaria: {{ c.cervejaria.cervejaria }}<br>
-    Preço: R$ {{ c.preco }}
-  </li>
-</ul>
+
+  <div class="container">
+
+  <div class="row">
+
+   <div class="col-md-4 mb-4" *ngFor="let c of cervejas">
+
+  <div class="card h-100">
+
+    <div class="imagens" *ngIf="c.imagem_1">
+      <img
+        [src]="getImagemUrl(c, c.imagem_1)"
+        class="card-img-top">
+    </div>
+
+    <div class="card-body">
+
+      <h5>{{ c.rotulo }}</h5>
+
+      <p>
+        {{ c.cervejaria.cervejaria }}
+      </p>
+
+      <h4>
+        R$ {{ c.preco | number:'1.2-2' }}
+      </h4>
+
+      <a
+        [routerLink]="['/cervejas', c.id]"
+        class="btn btn-primary">
+
+        Ver Detalhes
+
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+  </div>
+
+</div>
+
+</ng-container>

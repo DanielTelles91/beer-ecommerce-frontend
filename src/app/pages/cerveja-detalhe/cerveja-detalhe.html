@@ -1,3 +1,7 @@
+<div style="margin-top: 80px;">
+
+
+</div>
 <h2>Detalhe da Cerveja</h2>
 
 <button class="btn-voltar" routerLink="/cervejas">← Voltar</button>
@@ -7,7 +11,7 @@
   <strong>{{ cerveja.rotulo }}</strong><br>
   Cervejaria: {{ cerveja.cervejaria.cervejaria }}<br>
   País: {{ cerveja.cervejaria.pais }}<br>
-  Preço: R$ {{ cerveja.preco }}<br><br>
+  Preço: R$ {{ cerveja.preco | number:'1.2-2' }}<br><br>
 
   <div *ngIf="imagens.length > 0" style="display:flex; align-items:center; gap:10px;">
     <button (click)="anterior()">⬅</button>
@@ -22,3 +26,4 @@
 <ng-template #carregando>
   <p>Carregando cerveja...</p>
 </ng-template>
+ 

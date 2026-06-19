@@ -11,7 +11,8 @@ import { RouterModule } from '@angular/router';
   selector: 'app-cerveja-list',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './cerveja-list.html'
+  templateUrl: './cerveja-list.html',
+  styleUrl: './cerveja-list.css'
 })
 export class CervejaListComponent {
 
