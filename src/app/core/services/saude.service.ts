@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HealthService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   checkAngular() {
     return this.http.get('http://localhost:4200', { responseType: 'text' });

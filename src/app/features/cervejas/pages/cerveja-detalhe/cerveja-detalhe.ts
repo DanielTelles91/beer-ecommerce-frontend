@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, tap, switchMap, shareReplay } from 'rxjs';
 
-import { CervejaService } from '../../services/cerveja';
-import { Cerveja } from '../../models/cerveja';
+import { CervejaService } from '../../services/cerveja.service';
+import { Cerveja } from '../../models/cerveja.model';
 
 import { RouterModule } from '@angular/router';
 
