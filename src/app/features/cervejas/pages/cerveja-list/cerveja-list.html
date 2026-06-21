@@ -2,68 +2,62 @@
 
 <h2>Lista de Cervejas</h2>
 
-<ng-container *ngIf="cervejas$ | async as res">
+<p>Total: {{ cervejas.length }}</p>
+<input [formControl]="searchControl" placeholder="buscar">
+<div class="container">
+  <div class="row">
 
+    <div class="col-md-3 mb-3" *ngFor="let c of cervejas">
 
+      <div class="card h-100">
 
-  <div class="container">
-    <div class="row">
+        <img *ngIf="c.imagem_1" [src]="getImagemUrl(c, c.imagem_1)" class="card-img-top" />
 
-      <div class="col-md-3 mb-3" *ngFor="let c of res.content">
+        <div class="card-body">
 
-        <div class="card h-100">
+          <h5 class="mb-1">{{ c.rotulo }}</h5>
 
-          <img *ngIf="c.imagem_1" [src]="getImagemUrl(c, c.imagem_1)" class="card-img-top" />
+          <div class="text-muted small mb-2">
+            <div>{{ c.cervejaria.cervejaria }}</div>
+            <div>{{ c.cervejaria.pais }}</div>
+          </div>
 
-          <div class="card-body">
+          <h4>R$ {{ c.preco | number:'1.2-2' }}</h4>
 
-            <h5 class="mb-1">{{ c.rotulo }}</h5>
+          <div class="d-grid gap-2 mt-2">
 
-            <div class="text-muted small mb-2">
-              <div>{{ c.cervejaria.cervejaria }}</div>
-              <div>{{ c.cervejaria.pais }}</div>
-            </div>
+            <a [routerLink]="['', c.id]" class="btn btn-success">
+              Adicionar ao Carrinho
+            </a>
 
-            <h4>
-              R$ {{ c.preco | number:'1.2-2' }}
-            </h4>
-
-            <div class="d-grid gap-2 mt-2">
-
-              <a [routerLink]="['', c.id]" class="btn btn-success">
-                Adicionar ao Carrinho
-              </a>
-
-              <a [routerLink]="['/cervejas', c.id]" class="btn btn-outline-primary">
-                Ver Detalhes
-              </a>
-
-            </div>
+            <a [routerLink]="['/cervejas', c.id]" class="btn btn-outline-primary">
+              Ver Detalhes
+            </a>
 
           </div>
-        </div>
 
+        </div>
       </div>
 
     </div>
-  </div>
-
-  <!-- Func. paginação -->
-  <div class="d-flex justify-content-center align-items-center mt-4 gap-3">
-
-    <button class="btn btn-outline-secondary" (click)="paginaAnterior()" [disabled]="paginaAtual === 0">
-      Anterior
-    </button>
-
-    <span>
-      Página {{ paginaAtual + 1 }} de {{ res.totalPages }}
-    </span>
-
-    <button class="btn btn-outline-secondary" (click)="proximaPagina(res.totalPages)"
-      [disabled]="paginaAtual >= res.totalPages - 1">
-      Próximo
-    </button>
 
   </div>
+</div>
 
-</ng-container>
+<!-- Paginação -->
+<div class="d-flex justify-content-center align-items-center mt-4 gap-3">
+
+  <button class="btn btn-outline-secondary" (click)="paginaAnterior()" [disabled]="paginaAtual === 0">
+    Anterior
+  </button>
+
+  <span>
+    Página {{ paginaAtual + 1 }} de {{ totalPages }}
+  </span>
+
+  <button class="btn btn-outline-secondary" (click)="proximaPagina(totalPages)"
+    [disabled]="paginaAtual >= totalPages - 1">
+    Próximo
+  </button>
+
+</div>

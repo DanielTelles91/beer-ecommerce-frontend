@@ -18,4 +18,10 @@ export class CervejaService {
   buscarPorId(id: number) {
     return this.http.get<Cerveja>(`${this.apiUrl}/${id}`);
   }
+ buscarPorNome(nome: string) {
+  return this.http.get<any>(
+    `${this.apiUrl}/buscar?nome=${nome}`
+  );
+}
+
 }
