@@ -8,11 +8,18 @@
       <input type="text" placeholder="Procure..." [formControl]="searchControl" />
    </div>
    <div class="menu">
-      <button>
+      <button class="btn btn-outline-light">
+         <i class="bi bi-person-circle me-2"></i>
          Entrar
       </button>
-      <button>
-         Carrinho (0)
+
+      <button class="btn btn-outline-light position-relative">
+         <i class="bi bi-cart3 me-2"></i>
+         Carrinho
+
+         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            3
+         </span>
       </button>
    </div>
 </nav>

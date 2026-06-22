@@ -1,0 +1,20 @@
+<div class="filtro-sidebar">
+
+    <h5>País</h5>
+    <ul class="lista-paises">
+        <li *ngFor="let pais of paises()" [class.ativo]="pais === paisSelecionado" (click)="selecionarPais(pais)">
+            {{ pais }}
+        </li>
+    </ul>
+
+    <h5>Preço</h5>
+    <button class="btn btn-sm btn-outline-secondary w-100" [class.ativo]="sortSelecionado === 'desc'"
+        (click)="ordenarPreco('desc')">
+        Maior preço primeiro
+    </button>
+    <button class="btn btn-sm btn-outline-secondary w-100 mb-2" [class.ativo]="sortSelecionado === 'asc'"
+        (click)="ordenarPreco('asc')">
+        Menor preço primeiro
+    </button>
+
+</div>

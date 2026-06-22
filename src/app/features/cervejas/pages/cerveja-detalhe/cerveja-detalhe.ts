@@ -13,6 +13,8 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './cerveja-detalhe.html',
+  styleUrl: './cerveja-detalhe.css'
+
 })
 export class CervejaDetalheComponent {
 

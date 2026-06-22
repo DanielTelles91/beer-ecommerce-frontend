@@ -1,9 +1,13 @@
 body {
-    background: linear-gradient(
-        135deg,
-        #fdf3e5,
-        #ffd294
-    );
+  background: linear-gradient(135deg,
+      #fdf3e5,
+      #ffd294);
 
-    min-height: 100vh;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  padding-top: 68px;
+  /* mesma altura da navbar */
 }

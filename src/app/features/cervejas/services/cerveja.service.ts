@@ -9,19 +9,25 @@ export class CervejaService {
 
   constructor(private http: HttpClient) { }
 
-  listar(page: number, size: number) {
-    return this.http.get<any>(
-      `${this.apiUrl}?page=${page}&size=${size}`
-    );
+  listar(page: number, size: number, pais?: string, ordenarPreco?: string) {
+    let url = `${this.apiUrl}?page=${page}&size=${size}`;
+    if (pais) url += `&pais=${encodeURIComponent(pais)}`;
+    if (ordenarPreco) url += `&ordenarPreco=${ordenarPreco}`;
+    return this.http.get<any>(url);
+  }
+
+  buscarPorNome(nome: string, page: number, size: number, pais?: string, ordenarPreco?: string) {
+    let url = `${this.apiUrl}/buscar?nome=${encodeURIComponent(nome)}&page=${page}&size=${size}`;
+    if (pais) url += `&pais=${encodeURIComponent(pais)}`;
+    if (ordenarPreco) url += `&ordenarPreco=${ordenarPreco}`;
+    return this.http.get<any>(url);
+  }
+
+  listarPaises() {
+    return this.http.get<string[]>(`${this.apiUrl}/paises`);
   }
 
   buscarPorId(id: number) {
     return this.http.get<Cerveja>(`${this.apiUrl}/${id}`);
   }
- buscarPorNome(nome: string) {
-  return this.http.get<any>(
-    `${this.apiUrl}/buscar?nome=${nome}`
-  );
-}
-
 }

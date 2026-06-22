@@ -1,0 +1,31 @@
+.filtro-sidebar {
+    position: sticky;
+    top: 90px;
+    padding: 16px;
+}
+
+.lista-paises {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 24px;
+}
+
+.lista-paises li {
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.lista-paises li:hover {
+    background: #f0f0f0;
+}
+
+.lista-paises li.ativo {
+    background: #198754;
+    color: white;
+}
+
+.ativo {
+    background: #198754 !important;
+    color: white !important;
+}

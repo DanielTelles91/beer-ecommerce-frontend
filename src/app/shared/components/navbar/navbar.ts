@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -11,4 +12,18 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
 })
 export class NavbarComponent {
   searchControl = new FormControl('');
+
+  constructor(private router: Router) {
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe(termo => {
+        this.router.navigate(['/cervejas'], {
+          queryParams: { busca: termo || null },
+          queryParamsHandling: 'merge'
+        });
+      });
+  }
 }

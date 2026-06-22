@@ -1,63 +1,53 @@
-<div style="margin-top: 80px;"></div>
-
-<h2>Lista de Cervejas</h2>
-
-<p>Total: {{ cervejas.length }}</p>
-<input [formControl]="searchControl" placeholder="buscar">
-<div class="container">
+<div class="container-fluid">
   <div class="row">
 
-    <div class="col-md-3 mb-3" *ngFor="let c of cervejas">
+    <div class="col-md-2">
+      <app-filtro-lateral [paisSelecionado]="paisAtual" [sortSelecionado]="sortAtual"
+        (paisChange)="onPaisChange($event)" (sortChange)="onSortChange($event)">
+      </app-filtro-lateral>
+    </div>
 
-      <div class="card h-100">
+    <div class="col-md-9">
+      <div class="row">
+        <div class="col-md-4 mb-3" *ngFor="let c of cervejas()">
+          <div class="card h-100">
+            <img *ngIf="c.imagem_1" [src]="getImagemUrl(c, c.imagem_1)" class="card-img-top" />
 
-        <img *ngIf="c.imagem_1" [src]="getImagemUrl(c, c.imagem_1)" class="card-img-top" />
-
-        <div class="card-body">
-
-          <h5 class="mb-1">{{ c.rotulo }}</h5>
-
-          <div class="text-muted small mb-2">
-            <div>{{ c.cervejaria.cervejaria }}</div>
-            <div>{{ c.cervejaria.pais }}</div>
+            <div class="card-body">
+              <h5 class="mb-1">{{ c.rotulo }}</h5>
+              <div class="text-muted small mb-2">
+                <div>{{ c.cervejaria.cervejaria }}</div>
+                <div>{{ c.cervejaria.pais }}</div>
+              </div>
+              <h4>R$ {{ c.preco | number:'1.2-2' }}</h4>
+              <div class="d-grid gap-2 mt-2">
+                <button class="btn btn-warning">
+                  <i class="bi bi-cart-plus me-1"></i>
+                  Adicionar ao carrinho
+                </button>
+                <a [routerLink]="['/cervejas', c.id]" class="btn btn-outline-primary">
+                  <i class="bi bi-eye me-1"></i>
+                  Ver detalhes
+                </a>
+              </div>
+            </div>
           </div>
-
-          <h4>R$ {{ c.preco | number:'1.2-2' }}</h4>
-
-          <div class="d-grid gap-2 mt-2">
-
-            <a [routerLink]="['', c.id]" class="btn btn-success">
-              Adicionar ao Carrinho
-            </a>
-
-            <a [routerLink]="['/cervejas', c.id]" class="btn btn-outline-primary">
-              Ver Detalhes
-            </a>
-
-          </div>
-
         </div>
       </div>
 
+      <div class="d-flex justify-content-center align-items-center gap-3">
+        <button class="btn btn-outline-secondary btn-sm" (click)="paginaAnterior()" [disabled]="paginaAtual === 0">
+          Anterior
+        </button>
+        <span>
+          Página {{ paginaAtual + 1 }} de {{ totalPages() }}
+        </span>
+        <button class="btn btn-outline-secondary btn-sm" (click)="proximaPagina()"
+          [disabled]="paginaAtual >= totalPages() - 1">
+          Próximo
+        </button>
+      </div>
+
     </div>
-
   </div>
-</div>
-
-<!-- Paginação -->
-<div class="d-flex justify-content-center align-items-center mt-4 gap-3">
-
-  <button class="btn btn-outline-secondary" (click)="paginaAnterior()" [disabled]="paginaAtual === 0">
-    Anterior
-  </button>
-
-  <span>
-    Página {{ paginaAtual + 1 }} de {{ totalPages }}
-  </span>
-
-  <button class="btn btn-outline-secondary" (click)="proximaPagina(totalPages)"
-    [disabled]="paginaAtual >= totalPages - 1">
-    Próximo
-  </button>
-
 </div>

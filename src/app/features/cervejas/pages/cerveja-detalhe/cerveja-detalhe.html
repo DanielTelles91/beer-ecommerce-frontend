@@ -1,28 +1,80 @@
-<div style="margin-top: 80px;">
+<div class="page container product-page">
 
+  <ng-container *ngIf="cerveja$ | async as cerveja; else carregando">
+
+    <!--  Layout Principal (imagem + info) -->
+    <div class="product-layout">
+
+      <!-- Imagem -->
+      <div class="product-images">
+        <div class="main-image">
+          <button class="nav-btn left" (click)="anterior()">‹</button>
+
+          <img class="product-img" [src]="getImagemUrl(cerveja)" alt="{{ cerveja.rotulo }}" />
+          <button class="nav-btn right" (click)="proxima()">›</button>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="product-info">
+        <h1 class="title">{{ cerveja.rotulo }}</h1>
+        <p class="subtitle">
+          {{ cerveja.cervejaria.cervejaria }} • {{ cerveja.cervejaria.pais }}
+        </p>
+
+
+        <!-- Sub Info -->
+        <div class="badges">
+          <span class="badge">Volume: {{ cerveja.volume }}ml</span>
+          <span class="badge">Teor: {{ cerveja.teor }}</span>
+          <span class="badge">Sabor: {{ cerveja.sabor }}</span>
+        </div>
+
+        <!-- Preço -->
+        <div class="price">
+          R$ {{ cerveja.preco | number:'1.2-2' }}
+        </div>
+
+        <!-- Estoque -->
+        <p class="stock" [class.ok]="cerveja.disponibilidade">
+          {{ cerveja.disponibilidade ? 'Em estoque' : 'Indisponível' }}
+        </p>
+
+        <!-- Botão Compra -->
+        <button class="buy-btn" [disabled]="!cerveja.disponibilidade">
+          Adicionar ao carrinho
+        </button>
+
+        <!-- Botão  Add Favoritos -->
+        <button class="fav-btn">
+          Adicionar ao Favorito
+        </button>
+
+        <!-- Ficha Técnica -->
+        <div class="specs">
+          <h3>Informações do produto</h3>
+          <ul>
+            <li><b>Família:</b> {{ cerveja.familia_e_estilo }}</li>
+            <li><b>Temperatura ideal:</b> {{ cerveja.temperatura }}</li>
+            <li><b>Volume:</b> {{ cerveja.volume }} ml</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!--  Descrição  -->
+    <div class="product-description" *ngIf="cerveja.descricao">
+      <h2>Descrição do produto</h2>
+      <p>
+        {{ cerveja.descricao }}
+      </p>
+    </div>
+
+  </ng-container>
+
+  <!-- Carregamento -->
+  <ng-template #carregando>
+    <div class="loading">Carregando...</div>
+  </ng-template>
 
 </div>
-<h2>Detalhe da Cerveja</h2>
-
-<button class="btn-voltar" routerLink="/cervejas">← Voltar</button>
-
-<div *ngIf="cerveja$ | async as cerveja; else carregando">
-
-  <strong>{{ cerveja.rotulo }}</strong><br>
-  Cervejaria: {{ cerveja.cervejaria.cervejaria }}<br>
-  País: {{ cerveja.cervejaria.pais }}<br>
-  Preço: R$ {{ cerveja.preco | number:'1.2-2' }}<br><br>
-
-  <div *ngIf="imagens.length > 0" style="display:flex; align-items:center; gap:10px;">
-    <button (click)="anterior()">⬅</button>
-
-    <img [src]="getImagemUrl(cerveja)" width="300" />
-
-    <button (click)="proxima()">➡</button>
-  </div>
-
-</div>
-
-<ng-template #carregando>
-  <p>Carregando cerveja...</p>
-</ng-template>

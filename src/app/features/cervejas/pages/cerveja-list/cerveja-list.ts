@@ -1,88 +1,93 @@
-import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CervejaService } from '../../services/cerveja.service';
 import { Cerveja } from '../../models/cerveja.model';
-import { RouterModule } from '@angular/router';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { ChangeDetectorRef } from '@angular/core';
+import { RouterModule, ActivatedRoute } from '@angular/router';
+import { FiltroLateralComponent } from '../../components/filtro-lateral/filtro-lateral';
 
 @Component({
   selector: 'app-cerveja-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FiltroLateralComponent],
   templateUrl: './cerveja-list.html',
   styleUrl: './cerveja-list.css'
 })
 export class CervejaListComponent implements OnInit {
 
-  cervejas: Cerveja[] = [];
+  cervejas = signal<Cerveja[]>([]);
+  totalPages = signal<number>(0);
 
   paginaAtual = 0;
-  tamanho = 4;
+  tamanho = 6;
 
-  searchControl = new FormControl('');
+  termoAtual = '';
+  paisAtual: string | null = null;
+  sortAtual: string | null = null;
 
   constructor(
     private service: CervejaService,
-    private cdr: ChangeDetectorRef
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
-
   ngOnInit() {
-    this.carregar();
-    this.searchControl.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-      .subscribe(value => {
-        console.log('DIGITOU:', value);
-        this.buscar(value || '');
-      });
+    this.route.queryParams.subscribe(params => {
+      this.termoAtual = params['busca'] || '';
+      this.paisAtual = params['pais'] || null;
+      this.sortAtual = params['sort'] || null;
+      this.paginaAtual = 0;
+      this.buscarOuListar();
+    });
   }
 
-  carregar() {
-    this.service.listar(this.paginaAtual, this.tamanho)
-      .subscribe((res: any) => {
-        this.cervejas = res.content;
-        this.totalPages = res.totalPages;
-
-        this.cdr.detectChanges(); //  impo. nesse tipo de bug
-      });
-  }
-
-  buscar(termo: string) {
-    this.paginaAtual = 0; //  importante resetar pagina
-
-    if (!termo || termo.trim() === '') {
-      this.carregar();
-      return;
+  private buscarOuListar() {
+    if (this.termoAtual) {
+      this.service.buscarPorNome(this.termoAtual, this.paginaAtual, this.tamanho, this.paisAtual ?? undefined, this.sortAtual ?? undefined)
+        .subscribe((res: any) => {
+          this.cervejas.set(res.content ?? res);
+          this.totalPages.set(res.totalPages ?? 0);
+        });
+    } else {
+      this.service.listar(this.paginaAtual, this.tamanho, this.paisAtual ?? undefined, this.sortAtual ?? undefined)
+        .subscribe((res: any) => {
+          this.cervejas.set(res.content);
+          this.totalPages.set(res.totalPages);
+        });
     }
-
-    this.service.buscarPorNome(termo)
-      .subscribe((res: any) => {
-        this.cervejas = res.content ?? res;
-        this.totalPages = res.totalPages ?? 0;
-      });
   }
 
-  proximaPagina(totalPages: number) {
-    if (this.paginaAtual < totalPages - 1) {
+  proximaPagina() {
+    if (this.paginaAtual < this.totalPages() - 1) {
       this.paginaAtual++;
-      this.carregar();
+      this.buscarOuListar();
     }
   }
 
   paginaAnterior() {
     if (this.paginaAtual > 0) {
       this.paginaAtual--;
-      this.carregar();
+      this.buscarOuListar();
     }
+  }
+
+  onPaisChange(pais: string | null) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { pais },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  onSortChange(sort: string | null) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { sort },
+      queryParamsHandling: 'merge'
+    });
   }
 
   getImagemUrl(c: Cerveja, nome: string): string {
     return `http://localhost:8080/uploads/images/${c.cervejaria.id}/${nome}`;
   }
-  totalPages = 0;
 }
