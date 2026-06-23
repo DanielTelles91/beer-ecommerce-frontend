@@ -18,9 +18,10 @@
       <!-- Info -->
       <div class="product-info">
         <h1 class="title">{{ cerveja.rotulo }}</h1>
-        <p class="subtitle">
-          {{ cerveja.cervejaria.cervejaria }} • {{ cerveja.cervejaria.pais }}
-        </p>
+        <div class="text-muted small mb-2">
+          <div>{{ cerveja.cervejaria.cervejaria }}</div>
+          <div>{{ cerveja.cervejaria.pais }}</div>
+        </div>
 
 
         <!-- Sub Info -->
@@ -56,7 +57,7 @@
           <ul>
             <li><b>Família:</b> {{ cerveja.familia_e_estilo }}</li>
             <li><b>Temperatura ideal:</b> {{ cerveja.temperatura }}</li>
-            <li><b>Volume:</b> {{ cerveja.volume }} ml</li>
+            <li><b>Cor:</b> {{ cerveja.cor }}</li>
           </ul>
         </div>
       </div>

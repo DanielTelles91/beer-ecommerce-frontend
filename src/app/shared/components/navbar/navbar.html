@@ -1,25 +1,99 @@
 <nav class="navbar">
+
+   <!-- LOGO -->
    <div class="logo">
       <a routerLink="/cervejas">
          Route Express Beer
       </a>
    </div>
+
+   <!-- PESQUISA -->
    <div class="pesquisa">
       <input type="text" placeholder="Procure..." [formControl]="searchControl" />
    </div>
+
+   <!-- MENU -->
    <div class="menu">
+
+      <!-- LOGIN -->
       <button class="btn btn-outline-light">
          <i class="bi bi-person-circle me-2"></i>
          Entrar
       </button>
 
-      <button class="btn btn-outline-light position-relative">
-         <i class="bi bi-cart3 me-2"></i>
-         Carrinho
+      <!-- MINI CARRINHO -->
+      <div class="dropdown" (mouseenter)="open = true" (mouseleave)="open = false" style="position: relative;">
 
-         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            3
-         </span>
-      </button>
+         <!-- BOTÃO CARRINHO -->
+         <button class="btn btn-outline-light position-relative" (click)="open = !open">
+
+            <i class="bi bi-cart3 me-2"></i>
+            Carrinho
+
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+               {{ carrinhoService.carrinho().totalItens }}
+            </span>
+
+         </button>
+
+         <!-- DROPDOWN -->
+         <div class="dropdown-menu-custom" [class.show]="open">
+
+            <!-- ITENS (scroll aqui) -->
+            <div class="cart-items">
+
+               <div *ngIf="carrinhoService.carrinho().itens.length === 0" class="text-center p-3 text-muted">
+                  Carrinho vazio 🛒
+               </div>
+
+               <div *ngFor="let item of carrinhoService.carrinho().itens" class="cart-item">
+
+                  <div class="flex-grow-1">
+
+                     <div class="cart-title">
+                        {{ item.rotulo }}
+                     </div>
+
+                     <div class="cart-sub">
+                        {{ item.quantidade }}x R$ {{ item.preco | number:'1.2-2' }}
+                     </div>
+
+                  </div>
+
+                  <div class="text-end">
+
+                     <div class="cart-price">
+                        R$ {{ item.subtotal | number:'1.2-2' }}
+                     </div>
+
+                     <button class="btn btn-sm btn-outline-danger mt-1" (click)="remover(item.itemId)">
+                        remover
+                     </button>
+
+                  </div>
+
+               </div>
+
+            </div>
+
+            <!-- FOOTER FIXO -->
+            <div class="cart-footer">
+
+               <div class="cart-total">
+                  <span>Total</span>
+                  <span>
+                     R$ {{ carrinhoService.carrinho().total | number:'1.2-2' }}
+                  </span>
+               </div>
+
+               <button class="cart-button" routerLink="/carrinho" (click)="open = false">
+                  Abrir carrinho
+               </button>
+
+            </div>
+
+         </div>
+      </div>
+
    </div>
 </nav>

@@ -1,8 +1,111 @@
+.dropdown-menu-custom {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 340px;
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+    background: #fde7c8;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.dropdown-menu-custom.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/*  área SCROLL */
+.cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* FOOTER FIXO */
+.cart-footer {
+    padding: 10px;
+    border-top: 1px solid #e5e5e5;
+    background: #fcd5a0;
+}
+
+/* ITEM */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: #f1f1f1;
+    border-radius: 10px;
+    border: 1px solid #eee;
+}
+
+/* TEXTO */
+.cart-title {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.cart-sub {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.cart-price {
+    font-weight: bold;
+    color: #198754;
+}
+
+/* TOTAL */
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin-top: 10px;
+    background: #fff3cd;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* BOTÃO */
+.cart-button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background: #0d6efd;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cart-button:hover {
+    background: #0b5ed7;
+}
+
+.dropdown-menu-custom {
+    color: #212529;
+}
+
+/* garante que nada herde branco do navbar */
+.dropdown-menu-custom * {
+    color: inherit;
+}
+
+
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(33, 37, 41, 0.20);
+    background: rgba(33, 37, 41, 0.10);
     color: white;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);

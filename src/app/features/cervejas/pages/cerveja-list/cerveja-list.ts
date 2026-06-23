@@ -5,7 +5,9 @@ import { CervejaService } from '../../services/cerveja.service';
 import { Cerveja } from '../../models/cerveja.model';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FiltroLateralComponent } from '../../components/filtro-lateral/filtro-lateral';
-
+import { CarrinhoService } from '../../../carrinho/services/carrinho.service';
+import { environment } from '../../../../../environments/environment';
+import { catchError, of } from 'rxjs';
 @Component({
   selector: 'app-cerveja-list',
   standalone: true,
@@ -17,6 +19,7 @@ export class CervejaListComponent implements OnInit {
 
   cervejas = signal<Cerveja[]>([]);
   totalPages = signal<number>(0);
+  erro = signal<string | null>(null);
 
   paginaAtual = 0;
   tamanho = 6;
@@ -28,8 +31,14 @@ export class CervejaListComponent implements OnInit {
   constructor(
     private service: CervejaService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public carrinhoService: CarrinhoService
   ) { }
+
+  adicionarAoCarrinho(cervejaId: number) {
+    this.carrinhoService.adicionarItem(cervejaId, 1);
+  }
+
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -42,19 +51,21 @@ export class CervejaListComponent implements OnInit {
   }
 
   private buscarOuListar() {
-    if (this.termoAtual) {
-      this.service.buscarPorNome(this.termoAtual, this.paginaAtual, this.tamanho, this.paisAtual ?? undefined, this.sortAtual ?? undefined)
-        .subscribe((res: any) => {
-          this.cervejas.set(res.content ?? res);
-          this.totalPages.set(res.totalPages ?? 0);
-        });
-    } else {
-      this.service.listar(this.paginaAtual, this.tamanho, this.paisAtual ?? undefined, this.sortAtual ?? undefined)
-        .subscribe((res: any) => {
-          this.cervejas.set(res.content);
-          this.totalPages.set(res.totalPages);
-        });
-    }
+    this.erro.set(null);
+
+    const obs = this.termoAtual
+      ? this.service.buscarPorNome(this.termoAtual, this.paginaAtual, this.tamanho, this.paisAtual ?? undefined, this.sortAtual ?? undefined)
+      : this.service.listar(this.paginaAtual, this.tamanho, this.paisAtual ?? undefined, this.sortAtual ?? undefined);
+
+    obs.pipe(
+      catchError(() => {
+        this.erro.set('Não foi possível carregar as cervejas. Verifique se o servidor está rodando.');
+        return of({ content: [], totalPages: 0 });
+      })
+    ).subscribe((res: any) => {
+      this.cervejas.set(res.content ?? res);
+      this.totalPages.set(res.totalPages ?? 0);
+    });
   }
 
   proximaPagina() {
@@ -88,6 +99,10 @@ export class CervejaListComponent implements OnInit {
   }
 
   getImagemUrl(c: Cerveja, nome: string): string {
-    return `http://localhost:8080/uploads/images/${c.cervejaria.id}/${nome}`;
+    return `${environment.apiUrl}/uploads/images/${c.cervejaria.id}/${nome}`;
   }
+
+
+
+
 }
