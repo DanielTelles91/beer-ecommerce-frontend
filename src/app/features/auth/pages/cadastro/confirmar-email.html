@@ -1,0 +1,8 @@
+<div class="container text-center" style="margin-top: 100px;">
+    <div *ngIf="sucesso()" class="alert alert-success d-inline-block">
+        E-mail confirmado com sucesso! <a routerLink="/cervejas">Voltar à loja</a>
+    </div>
+    <div *ngIf="erro()" class="alert alert-danger d-inline-block">
+        {{ erro() }}
+    </div>
+</div>
