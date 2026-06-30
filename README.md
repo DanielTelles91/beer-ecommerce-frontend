@@ -25,6 +25,7 @@ The project was developed as a practical study of Angular and modern frontend ar
 - Angular Signals (zoneless change detection)
 - Angular SSR (Server-Side Rendering)
 - Reactive Forms
+- JWT based authentication (HTTP Interceptor Route Guards)
 
 
 ## Current Features
@@ -61,7 +62,8 @@ Shopping Cart
     - Increase / decrease item quantity (decreasing to zero automatically removes the item, matching the backend rule). 
     - Remove item directly.
     - Empty-cart state with a call-to-action back to the catalog.
-    - "Continue shopping" and "Checkout" actions (checkout flow itself is not implemented yet — see Planned Features).   
+    - "Continue shopping" and "Checkout" actions (checkout flow itself is not implemented yet see Planned Features).   
+- Guest cart is automatically merged into the customer's cart on login (see Authentication below), so items added before logging in aren't lost and the cart stays consistent across devices.    
 
 Customer Registration & Email Confirmation
 
@@ -71,13 +73,21 @@ Customer Registration & Email Confirmation
 - Support for the admin created customer flow as well: when a customer is registered directly through the Back Office, they receive an e-mail with a link to set their password for the first time (/definir-senha), which also confirms their e-mail in the same step.
 
 
+Authentication
+
+- Login page (/login) issuing a JWT from the backend on successful authentication.
+- Token persisted in localStorage and automatically attached to every outgoing HTTP request via an HTTP Interceptor (no need to set headers manually in each service).
+- Navbar reacts to authentication state: shows "Entrar" for guests, the customer's name and a logout option once authenticated.
+- Route guards: a guest guard keeps logged-in users out of /login and /cadastro (redirecting to the catalog), and an auth guard is in place to protect future account-only pages (e.g. order history), redirecting unauthenticated users to /login.
+- On login, the guest cart (identified by the session UUID) is merged into the customer's cart on the backend, so items added anonymously are preserved.        
+
 Backend Integration
 
 - Communication with Spring Boot REST API.
-- JSON-based data exchange.
+- JSON based data exchange.
 - Dynamic product loading from MySQL database through the backend layer.
 - Centralized API base URL via Angular environments (environment.ts / environment.prod.ts).
-- HTTP error handling (catchError) on catalog and cart requests, showing a user-facing message instead of a blank screen when the backend is unreachable.
+- HTTP error handling (catchError) on catalog and cart requests, showing a user facing message instead of a blank screen when the backend is unreachable.
 
 
 ## Architecture
@@ -109,15 +119,17 @@ Backend Integration
 
 1. Zoneless change detection: this project was generated without zone.js, as recent Angular CLI versions default to a zoneless setup. After moving from the async pipe to manual .subscribe() calls (to support search and filtering), the view stopped updating automatically a typical zoneless change detection issue. Rather than masking it with ChangeDetectorRef.detectChanges(), the affected components were refactored to use Angular Signals (signal()), which integrate natively with zoneless change detection and trigger automatic, granular UI updates.
 
-2. Cross-component state via query params: the search input lives in the NavbarComponent, while the country filter and price sort live in a sidebar component (FiltroLateralComponent) none of them share a parent/child relationship with the catalog list. Their state is synchronized through route query parameters rather than a shared service, following the same pattern used by real-world e-commerce platforms (filters reflected in the URL, shareable and bookmarkable).
+2. Cross-component state via query params: the search input lives in the NavbarComponent, while the country filter and price sort live in a sidebar component (FiltroLateralComponent) none of them share a parent/child relationship with the catalog list. Their state is synchronized through route query parameters rather than a shared service, following the same pattern used by real world e-commerce platforms (filters reflected in the URL, shareable and bookmarkable).
 
 3. Sorting across a collection relationship (backend): beer price lives on the related Estoque (stock) entity, not directly on Cerveja. Spring Data's automatic Sort/Pageable resolution can't navigate through a @OneToMany collection to order by a field on it (PathException: Plural path ... refers to a collection). This was solved with explicit JPQL queries ordering by the joined entity's field (ORDER BY e.preco) instead of relying on automatic sort resolution.
 
-4. SSR and browser only APIs: Angular SSR (Server-Side Rendering) runs part of the application on Node.js before it reaches the browser, where APIs like localStorage and window don't exist. The cart's session identifier logic checks typeof window !== 'undefined' before touching localStorage, preventing a ReferenceError during server-side rendering.
+4. SSR and browser only APIs: Angular SSR (Server-Side Rendering) runs part of the application on Node.js before it reaches the browser, where APIs like localStorage and window don't exist. The cart's session identifier logic checks typeof window !== 'undefined' before touching localStorage, preventing a ReferenceError during server side rendering.
 
 5. Guest cart persistence: since customer login/registration is not implemented yet, the cart is tied to a randomly generated session UUID (crypto.randomUUID()) stored in localStorage, and persisted server side in a carrinho table keyed by that session id. This mirrors how real e-commerce platforms handle guest carts, and is designed to be merged into a user account once authentication is added.
 
 6. SSR double execution on side effectful requests: components that trigger a one time, non idempotent backend call (such as /confirmar-email, which consumes a single-use token) can hit a subtle SSR pitfall: the component runs once on the server (to render initial HTML) and once again in the browser during hydration. Calling the API directly in the constructor caused it to fire twice the server side call succeeded and consumed the token, while the browser side call immediately after failed because the token no longer existed, overwriting the success message with an error. The fix mirrors the localStorage guard above: side effectful calls are skipped entirely when typeof window === 'undefined', ensuring they only run once, in the browser.
+
+7. Centralized token handling via HTTP Interceptor: rather than manually attaching the JWT to each service's HTTP calls, a functional HttpInterceptorFn reads the token from AuthService and adds the Authorization: Bearer header to every outgoing request. This keeps authentication concerns out of individual services and ensures any new service automatically sends the token without extra wiring.
 
 
 ## Project Status
@@ -130,7 +142,10 @@ Implemented:
 - Country filter and price sorting (sidebar).
 - Product detail page.
 - Shopping cart (guest session, add/update/remove items, mini-cart + dedicated page).
-- Customer self-registration with e-mail confirmation First-password setup flow for admin-created customers.
+- JWT-based login/logout HTTP Interceptor for automatic token attachment.
+- Route guards (guest guard and auth guard)
+- Guest cart merge into customer account on login
+- Customer self registration with e-mail confirmation First password setup flow for admin created customers.
 - Backend integration with centralized environment configuration.
 - HTTP error handling on catalog and cart requests.
 - Angular routing.
@@ -138,8 +153,7 @@ Implemented:
 
 Planned Features:
 - Home page redesign.
-- Customer registration and login (JWT-based authentication).
-- Merging guest cart into customer account on login.
+- Customer account page (order history, profile)
 - Checkout flow.
 - Order management.
 - Responsive interface improvements.

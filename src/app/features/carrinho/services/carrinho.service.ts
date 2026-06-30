@@ -2,9 +2,11 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Carrinho } from '../models/carrinho.model';
 import { environment } from '../../../../environments/environment';
+import { catchError, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class CarrinhoService {
+
 
     private apiUrl = `${environment.apiUrl}/api/carrinho`;
     private sessionId: string;
@@ -59,4 +61,13 @@ export class CarrinhoService {
             `${this.apiUrl}/itens/${itemId}?sessionId=${this.sessionId}`
         ).subscribe(res => this.carrinho.set(res));
     }
+
+    mergeCarrinho() {
+        if (!this.sessionId) return;
+        this.http.post<Carrinho>(`${this.apiUrl}/merge?sessionId=${this.sessionId}`, {})
+            .pipe(catchError(() => of(this.carrinho())))
+            .subscribe(res => this.carrinho.set(res));
+    }
+
+
 }

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
+import { AuthService } from '../../../features/auth/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -20,7 +21,9 @@ export class NavbarComponent {
 
   constructor(
     private router: Router,
-    public carrinhoService: CarrinhoService
+    public carrinhoService: CarrinhoService,
+    public authService: AuthService,
+    private elementRef: ElementRef
   ) {
 
     //  busca
@@ -40,5 +43,10 @@ export class NavbarComponent {
   //  remover item do carrinho
   remover(itemId: number) {
     this.carrinhoService.removerItem(itemId);
+  }
+
+  sair() {
+    this.authService.logout();
+    this.router.navigate(['/cervejas']);
   }
 }

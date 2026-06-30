@@ -16,10 +16,18 @@
    <div class="menu">
 
       <!-- LOGIN -->
-      <button class="btn btn-outline-light">
+      <button *ngIf="!authService.usuario()" class="btn btn-outline-light" routerLink="/login">
          <i class="bi bi-person-circle me-2"></i>
          Entrar
       </button>
+
+      <div *ngIf="authService.usuario()" class="dropdown" style="position: relative;">
+         <button class="btn btn-outline-light">
+            <i class="bi bi-person-circle me-2"></i>
+            {{ authService.usuario()?.nome }}
+         </button>
+         <button class="btn btn-sm btn-outline-light ms-1" (click)="sair()">Sair</button>
+      </div>
 
       <!-- MINI CARRINHO -->
       <div class="dropdown" (mouseenter)="open = true" (mouseleave)="open = false" style="position: relative;">
