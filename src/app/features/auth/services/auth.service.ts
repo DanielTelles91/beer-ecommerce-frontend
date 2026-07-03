@@ -52,6 +52,18 @@ export class AuthService {
     localStorage.setItem('auth_nome', nome);
     localStorage.setItem('auth_email', email);
     this.usuario.set({ nome, email });
+    this.criarEnderecoPendente();
+  }
+
+  private criarEnderecoPendente() {
+    const pendente = localStorage.getItem('endereco_pendente');
+    if (!pendente) return;
+
+    const dto = JSON.parse(pendente);
+    this.http.post(`${this.apiUrl.replace('/clientes', '')}/enderecos`, dto).subscribe({
+      next: () => localStorage.removeItem('endereco_pendente'),
+      error: () => { } // falhou silenciosamente, cliente pode adicionar em Minha Conta
+    });
   }
 
   getToken(): string | null {
@@ -89,6 +101,18 @@ export class AuthService {
 
   confirmarEmail(token: string) {
     return this.http.get(`${this.apiUrl}/confirmar-email?token=${token}`, { responseType: 'text' });
+  }
+
+  verificarCpf(cpf: string) {
+    return this.http.get<{ disponivel: boolean }>(
+      `${this.apiUrl}/verificar-cpf?cpf=${cpf}`
+    );
+  }
+
+  verificarEmail(email: string) {
+    return this.http.get<{ disponivel: boolean }>(
+      `${this.apiUrl}/verificar-email?email=${email}`
+    );
   }
 
 }

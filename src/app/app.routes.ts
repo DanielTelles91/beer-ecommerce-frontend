@@ -8,6 +8,13 @@ import { ConfirmarEmailComponent } from './features/auth/pages/cadastro/confirma
 import { LoginComponent } from './features/auth/pages/login/login';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { MinhaContaComponent } from './features/auth/pages/minha-conta/minha-conta';
+import { AguardandoConfirmacaoComponent } from './features/auth/pages/cadastro/aguardando-confirmacao';
+import { CheckoutComponent } from './features/pedidos/pages/checkout/checkout';
+import { MeusPedidosComponent } from './features/pedidos/pages/meus-pedidos/meus-pedidos';
+
+
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'cervejas', pathMatch: 'full' },
@@ -21,6 +28,10 @@ export const routes: Routes = [
   { path: 'cadastro', component: CadastroComponent, canActivate: [guestGuard] },
   { path: 'confirmar-email', component: ConfirmarEmailComponent },
   { path: 'definir-senha', component: DefinirSenhaComponent },
+  { path: 'minha-conta', component: MinhaContaComponent, canActivate: [authGuard] },
+  { path: 'aguardando-confirmacao', component: AguardandoConfirmacaoComponent },
+  { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
+  { path: 'meus-pedidos', component: MeusPedidosComponent, canActivate: [authGuard] }
 
 
 ];

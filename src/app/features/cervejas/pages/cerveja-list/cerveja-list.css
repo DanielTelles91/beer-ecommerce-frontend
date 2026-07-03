@@ -5,7 +5,6 @@
   padding: 10px;
 }
 
-
 .paginacao {
   position: fixed;
   bottom: 0;
@@ -18,4 +17,16 @@
   -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 1000;
+}
+
+.offcanvas {
+  max-width: 300px;
+}
+
+.offcanvas-body {
+  overflow-y: auto;
+}
+
+.d-md-none {
+  margin-top: 80px;
 }

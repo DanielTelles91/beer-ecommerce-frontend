@@ -1,0 +1,92 @@
+<div class="container" style="margin-top: 90px; max-width: 700px;">
+    <h2 class="mb-1">Minha Conta</h2>
+    <p class="text-muted mb-4">{{ authService.usuario()?.email }}</p>
+    <div *ngIf="sucesso()" class="alert alert-success">{{ sucesso() }}</div>
+    <div *ngIf="erro()" class="alert alert-danger">{{ erro() }}</div>
+
+    <!-- Lista de endereços -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Meus Endereços</h5>
+        <button class="btn btn-success btn-sm" (click)="abrirFormNovo()"
+            *ngIf="!adicionando() && enderecos().length === 0">
+            + Adicionar endereço
+        </button>
+    </div>
+
+    <div *ngIf="enderecos().length === 0 && !adicionando()" class="text-muted mb-3">
+        Nenhum endereço cadastrado ainda.
+    </div>
+
+    <div class="card mb-2" *ngFor="let e of enderecos()">
+        <div class="card-body d-flex justify-content-between align-items-start">
+            <div>
+                <strong>{{ e.tipo_logradouro }} {{ e.logradouro }}, {{ e.logradouro_numero }}</strong>
+                <span *ngIf="e.complemento"> — {{ e.complemento }}</span>
+                <div class="text-muted small">{{ e.bairro }}, {{ e.cidade }} - {{ e.estado }}</div>
+                <div class="text-muted small">CEP: {{ e.cep }}</div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-secondary" (click)="editarEndereco(e)">Editar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário de adicionar/editar -->
+    <div *ngIf="adicionando()" class="card p-3 mt-3">
+        <h6 class="mb-3">{{ editandoId() ? 'Editar endereço' : 'Novo endereço' }}</h6>
+
+        <form [formGroup]="form">
+
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label">CEP</label>
+                    <div class="input-group">
+                        <input class="form-control" formControlName="cep" placeholder="00000-000"
+                            (blur)="buscarCep()" />
+                        <span class="input-group-text" *ngIf="buscandoCep()">...</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tipo</label>
+                    <input class="form-control" formControlName="tipo_logradouro" placeholder="Rua, Av..." />
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Logradouro</label>
+                    <input class="form-control" formControlName="logradouro" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <label class="form-label">Número</label>
+                    <input class="form-control" formControlName="logradouro_numero" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Complemento</label>
+                    <input class="form-control" formControlName="complemento" placeholder="Opcional" />
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Bairro</label>
+                    <input class="form-control" formControlName="bairro" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-7">
+                    <label class="form-label">Cidade</label>
+                    <input class="form-control" formControlName="cidade" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Estado</label>
+                    <input class="form-control" formControlName="estado" maxlength="2" />
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-success" (click)="salvar()">Salvar</button>
+                <button class="btn btn-outline-secondary" (click)="cancelar()">Cancelar</button>
+            </div>
+
+        </form>
+    </div>
+</div>

@@ -15,18 +15,42 @@
    <!-- MENU -->
    <div class="menu">
 
-      <!-- LOGIN -->
+      <!-- NÃO LOGADO -->
       <button *ngIf="!authService.usuario()" class="btn btn-outline-light" routerLink="/login">
          <i class="bi bi-person-circle me-2"></i>
          Entrar
       </button>
 
-      <div *ngIf="authService.usuario()" class="dropdown" style="position: relative;">
-         <button class="btn btn-outline-light">
+      <!-- LOGADO -->
+      <div *ngIf="authService.usuario()" class="dropdown">
+         <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
             <i class="bi bi-person-circle me-2"></i>
             {{ authService.usuario()?.nome }}
          </button>
-         <button class="btn btn-sm btn-outline-light ms-1" (click)="sair()">Sair</button>
+         <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+               <a class="dropdown-item" routerLink="/minha-conta">
+                  <i class="bi bi-person me-2"></i>
+                  Minha Conta
+               </a>
+            </li>
+            <li>
+               <a class="dropdown-item" routerLink="/meus-pedidos">
+                  <i class="bi bi-bag me-2"></i>
+                  Meus Pedidos
+               </a>
+            </li>
+            <li>
+               <hr class="dropdown-divider">
+            </li>
+            <li>
+               <button class="dropdown-item text-danger" (click)="sair()">
+                  <i class="bi bi-box-arrow-right me-2"></i>
+                  Sair
+               </button>
+            </li>
+         </ul>
       </div>
 
       <!-- MINI CARRINHO -->
@@ -34,74 +58,54 @@
 
          <!-- BOTÃO CARRINHO -->
          <button class="btn btn-outline-light position-relative" (click)="open = !open">
-
             <i class="bi bi-cart3 me-2"></i>
             Carrinho
-
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                {{ carrinhoService.carrinho().totalItens }}
             </span>
-
          </button>
 
          <!-- DROPDOWN -->
          <div class="dropdown-menu-custom" [class.show]="open">
 
-            <!-- ITENS (scroll aqui) -->
+            <!-- ITENS (scroll) -->
             <div class="cart-items">
-
                <div *ngIf="carrinhoService.carrinho().itens.length === 0" class="text-center p-3 text-muted">
-                  Carrinho vazio 🛒
+                  Carrinho vazio
                </div>
-
                <div *ngFor="let item of carrinhoService.carrinho().itens" class="cart-item">
-
                   <div class="flex-grow-1">
-
                      <div class="cart-title">
                         {{ item.rotulo }}
                      </div>
-
                      <div class="cart-sub">
                         {{ item.quantidade }}x R$ {{ item.preco | number:'1.2-2' }}
                      </div>
-
                   </div>
-
                   <div class="text-end">
-
                      <div class="cart-price">
                         R$ {{ item.subtotal | number:'1.2-2' }}
                      </div>
-
                      <button class="btn btn-sm btn-outline-danger mt-1" (click)="remover(item.itemId)">
                         remover
                      </button>
-
                   </div>
-
                </div>
-
             </div>
 
             <!-- FOOTER FIXO -->
             <div class="cart-footer">
-
                <div class="cart-total">
                   <span>Total</span>
                   <span>
                      R$ {{ carrinhoService.carrinho().total | number:'1.2-2' }}
                   </span>
                </div>
-
                <button class="cart-button" routerLink="/carrinho" (click)="open = false">
                   Abrir carrinho
                </button>
-
             </div>
-
          </div>
       </div>
-
    </div>
 </nav>

@@ -5,6 +5,7 @@ export interface CarrinhoItem {
     preco: number;
     quantidade: number;
     subtotal: number;
+    estoqueDisponivel: number;
 }
 
 export interface Carrinho {

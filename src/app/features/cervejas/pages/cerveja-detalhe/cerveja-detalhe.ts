@@ -2,11 +2,10 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, tap, switchMap, shareReplay } from 'rxjs';
-
 import { CervejaService } from '../../services/cerveja.service';
 import { Cerveja } from '../../models/cerveja.model';
-
 import { RouterModule } from '@angular/router';
+import { CarrinhoService } from '../../../carrinho/services/carrinho.service';
 
 @Component({
   selector: 'app-cerveja-detalhe',
@@ -25,7 +24,8 @@ export class CervejaDetalheComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private service: CervejaService
+    private service: CervejaService,
+    public carrinhoService: CarrinhoService
   ) {
     this.cerveja$ = this.route.paramMap.pipe(
       switchMap(params => this.service.buscarPorId(Number(params.get('id')))),
@@ -54,6 +54,10 @@ export class CervejaDetalheComponent {
   getImagemUrl(cerveja: Cerveja): string {
     if (this.imagens.length === 0) return '';
     return `http://localhost:8080/uploads/images/${cerveja.cervejaria.id}/${this.imagens[this.index]}`;
+  }
+
+    adicionarAoCarrinho(cervejaId: number) {
+    this.carrinhoService.adicionarItem(cervejaId, 1);
   }
 }
 

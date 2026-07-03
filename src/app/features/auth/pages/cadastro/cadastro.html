@@ -1,29 +1,146 @@
-<div class="container d-flex justify-content-center" style="margin-top: 60px;">
-    <div class="card p-4" style="max-width: 450px; width: 100%;">
+<div class="container d-flex justify-content-center" style="margin-top: 80px;">
+    <div class="card p-4" style="max-width: 500px; width: 100%;">
 
-        <h3 class="mb-3">Criar conta</h3>
-
-        <div *ngIf="sucesso()" class="alert alert-success">
-            Cadastro realizado! Verifique seu e-mail para confirmar a conta antes de fazer login.
+        <!-- Indicador de passos -->
+        <div class="d-flex justify-content-between mb-4">
+            <div *ngFor="let p of [1,2,3,4]" class="text-center flex-fill">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width:32px; height:32px; font-size:0.85rem;"
+                    [style.background]="passo() >= p ? '#198754' : '#e0e0e0'"
+                    [style.color]="passo() >= p ? 'white' : '#666'">
+                    {{ p }}
+                </div>
+                <div class="small mt-1" [style.color]="passo() >= p ? '#198754' : '#aaa'">
+                    {{ p === 1 ? 'CPF' : p === 2 ? 'Dados' : p === 3 ? 'Endereço' : 'Confirmar' }}
+                </div>
+            </div>
         </div>
 
-        <form *ngIf="!sucesso()" [formGroup]="form" (ngSubmit)="cadastrar()">
-            <div class="mb-2"><input class="form-control" placeholder="Nome" formControlName="first_name" /></div>
-            <div class="mb-2"><input class="form-control" placeholder="Sobrenome" formControlName="last_name" /></div>
-            <div class="mb-2"><input class="form-control" placeholder="E-mail" formControlName="email" /></div>
-            <div class="mb-2"><input class="form-control" placeholder="CPF" formControlName="cpf" /></div>
-            <div class="mb-2"><input class="form-control" placeholder="Telefone" formControlName="telefone" /></div>
-            <div class="mb-2"><input class="form-control" type="date" formControlName="data_nascimento" /></div>
-            <div class="mb-2"><input class="form-control" type="password" placeholder="Senha" formControlName="senha" />
+        <div *ngIf="erro()" class="alert alert-danger">{{ erro() }}</div>
+
+        <!-- Passo 1: CPF -->
+        <div *ngIf="passo() === 1"> 
+            <h5 class="mb-3">Informe seu CPF</h5>
+            <form [formGroup]="formCpf">
+                <div class="mb-3">
+                    <label class="form-label">CPF</label>
+                    <input class="form-control" formControlName="cpf" placeholder="000.000.000-00"
+                        (input)="formatarCpf($event)" maxlength="14" />
+                </div>
+                <button class="btn btn-success w-100" (click)="avancarPasso1()" [disabled]="carregando()">
+                    {{ carregando() ? 'Verificando...' : 'Continuar' }}
+                </button>
+                <p class="text-center mt-3 mb-0 small">
+                    Já tem conta? <a routerLink="/login">Entrar</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Passo 2: Dados pessoais -->
+        <div *ngIf="passo() === 2">
+            <h5 class="mb-3">Seus dados</h5>
+            <form [formGroup]="formDados">
+                <div class="row mb-2">
+                    <div class="col"><input class="form-control" placeholder="Nome" formControlName="first_name" />
+                    </div>
+                    <div class="col"><input class="form-control" placeholder="Sobrenome" formControlName="last_name" />
+                    </div>
+                </div>
+                <div class="mb-2"><input class="form-control" placeholder="E-mail" formControlName="email" /></div>
+                <div class="mb-2"><input class="form-control" placeholder="Telefone" formControlName="telefone" /></div>
+                <div class="mb-2"><input class="form-control" type="date" formControlName="data_nascimento" /></div>
+                <div class="mb-2">
+                    <select class="form-control" formControlName="sexo">
+                        <option value="">Sexo</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                    </select>
+                </div>
+                <div class="mb-2"><input class="form-control" type="password" placeholder="Senha (mín. 6 caracteres)"
+                        formControlName="senha" /></div>
+                <div class="mb-3"><input class="form-control" type="password" placeholder="Confirmar senha"
+                        formControlName="confirmarSenha" /></div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary" (click)="voltar()">Voltar</button>
+                    <button class="btn btn-success flex-fill" (click)="avancarPasso2()" [disabled]="carregando()">
+                        {{ carregando() ? 'Verificando...' : 'Continuar' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Passo 3: Endereço -->
+        <div *ngIf="passo() === 3">
+            <h5 class="mb-3">Endereço de entrega</h5>
+            <form [formGroup]="formEndereco">
+                <div class="row mb-2">
+                    <div class="col-md-5">
+                        <input class="form-control" placeholder="CEP" formControlName="cep" (blur)="buscarCep()" />
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" placeholder="Tipo" formControlName="tipo_logradouro" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" placeholder="Logradouro" formControlName="logradouro" />
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-3">
+                        <input class="form-control" placeholder="Número" formControlName="logradouro_numero" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" placeholder="Complemento" formControlName="complemento" />
+                    </div>
+                    <div class="col-md-5">
+                        <input class="form-control" placeholder="Bairro" formControlName="bairro" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="Cidade" formControlName="cidade" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" placeholder="UF" formControlName="estado" maxlength="2" />
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary" (click)="voltar()">Voltar</button>
+                    <button class="btn btn-success flex-fill" (click)="avancarPasso3()">Continuar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Passo 4: Confirmação -->
+        <div *ngIf="passo() === 4">
+            <h5 class="mb-3">Confirme seus dados</h5>
+
+            <div class="mb-3">
+                <strong>CPF:</strong> {{ formCpf.value.cpf }}<br>
+                <strong>Nome:</strong> {{ formDados.value.first_name }} {{ formDados.value.last_name }}<br>
+                <strong>E-mail:</strong> {{ formDados.value.email }}<br>
+                <strong>Telefone:</strong> {{ formDados.value.telefone }}
             </div>
-            <div class="mb-2"><input class="form-control" type="password" placeholder="Confirmar senha"
-                    formControlName="confirmarSenha" /></div>
 
-            <div *ngIf="erro()" class="alert alert-danger">{{ erro() }}</div>
+            <div class="mb-3">
+                <strong>Endereço:</strong><br>
+                {{ formEndereco.value.tipo_logradouro }} {{ formEndereco.value.logradouro }}, {{
+                formEndereco.value.logradouro_numero }}
+                <span *ngIf="formEndereco.value.complemento"> — {{ formEndereco.value.complemento }}</span><br>
+                {{ formEndereco.value.bairro }}, {{ formEndereco.value.cidade }} - {{ formEndereco.value.estado }}<br>
+                CEP: {{ formEndereco.value.cep }}
+            </div>
 
-            <button type="submit" class="btn btn-success w-100 mt-2" [disabled]="carregando()">
-                {{ carregando() ? 'Cadastrando...' : 'Cadastrar' }}
-            </button>
-        </form>
+            <p class="text-muted small">
+                Após o cadastro você receberá um e-mail para confirmar sua conta.
+            </p>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" (click)="voltar()" [disabled]="carregando()">Voltar</button>
+                <button class="btn btn-success flex-fill" (click)="confirmar()" [disabled]="carregando()">
+                    {{ carregando() ? 'Cadastrando...' : 'Confirmar Cadastro' }}
+                </button>
+            </div>
+        </div>
+
     </div>
 </div>

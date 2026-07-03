@@ -18,11 +18,21 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                    <button class="btn btn-sm btn-outline-secondary"
-                        (click)="diminuir(item.itemId, item.quantidade)">-</button>
+                    <button class="btn btn-sm btn-outline-secondary" (click)="diminuir(item.itemId, item.quantidade)">
+                        -
+                    </button>
+
                     <span class="px-2">{{ item.quantidade }}</span>
-                    <button class="btn btn-sm btn-outline-secondary"
-                        (click)="aumentar(item.itemId, item.quantidade)">+</button>
+
+                    <button class="btn btn-sm btn-outline-secondary" (click)="aumentar(item.itemId, item.quantidade)"
+                        [disabled]="item.quantidade >= item.estoqueDisponivel">
+                        +
+                    </button>
+                </div>
+
+                <!-- aviso de limite -->
+                <div *ngIf="item.quantidade >= item.estoqueDisponivel" class="text-danger small mt-1">
+                    Máximo disponível: {{ item.estoqueDisponivel }} unidade(s)
                 </div>
 
                 <div class="text-end" style="min-width: 110px;">
@@ -43,7 +53,7 @@
 
             <div class="text-end">
                 <h4 class="mb-3">Total: R$ {{ carrinhoService.carrinho().total | number:'1.2-2' }}</h4>
-                <button class="btn btn-success btn-lg" (click)="finalizarCompra()">
+                <button class="btn btn-success btn-lg" routerLink="/checkout">
                     Finalizar Compra
                 </button>
             </div>

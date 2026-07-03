@@ -31,23 +31,21 @@ The project was developed as a practical study of Angular and modern frontend ar
 ## Current Features
 
 Product Catalog
-
-- Beer listing page.
+- Beer listing page with pagination.
 - Product images loaded from the backend.
 - Product information display: Name, Brewery, Country, Price.
 - Sidebar filter by country (dynamically populated from available products).
 - Price sorting (lowest first / highest first).
+- Offcanvas filter panel on mobile (sidebar hidden by default, toggled via "Filtros" button).
 
 
 Search
-
 - Global search field located in the navbar (common e-commerce UX pattern). 
 - Debounced, reactive search (300ms) using RxJS debounceTime and distinctUntilChanged.
 - Search term, country filter and price sort are all propagated via route query parameters (e.g. /cervejas?busca=ipa&pais=Brasil&ordenarPreco=asc), making the catalog state shareable, bookmarkable and persistent across navigation/refresh.   
 
 
 Product Details
-
 - Dedicated product detail page.
 - Route-based navigation.
 - Product information loaded dynamically from the  backend API.
@@ -55,34 +53,58 @@ Product Details
 
 
 Shopping Cart
-
 - Persistent cart for guest users (no login required), identified by a UUID generated on first visit and stored in localStorage.
-- Mini cart dropdown in the navbar: shows items, quantities, subtotal and total; opens on hover and on click (mobile-friendly), and closes when clicking outside.
+- Mini cart dropdown in the navbar: shows items, quantities, subtotal and total. Opens on hover and on click (mobile-friendly), and closes when clicking outside.
 - Dedicated cart page (/carrinho):
-    - Increase / decrease item quantity (decreasing to zero automatically removes the item, matching the backend rule). 
-    - Remove item directly.
-    - Empty-cart state with a call-to-action back to the catalog.
-    - "Continue shopping" and "Checkout" actions (checkout flow itself is not implemented yet see Planned Features).   
-- Guest cart is automatically merged into the customer's cart on login (see Authentication below), so items added before logging in aren't lost and the cart stays consistent across devices.    
+    - Increase / decrease item quantity.
+    - "+" button is automatically disabled when the cart quantity reaches the available stock level, with a message showing the maximum available units preventing the customer from ordering more than what is in stock.
+    - Decreasing to zero automatically removes the item (matching the backend rule).
+    - Remove item directly.  
+- Guest cart is automatically merged into the customer's cart on login.   
+
 
 Customer Registration & Email Confirmation
-
-- Self-registration page (/cadastro) where the customer creates an account and sets their own password.
-- Confirmation e-mail sent on registration, with a one time token link.
-- Confirmation page (/confirmar-email) that validates the token against the backend and activates the account.
-- Support for the admin created customer flow as well: when a customer is registered directly through the Back Office, they receive an e-mail with a link to set their password for the first time (/definir-senha), which also confirms their e-mail in the same step.
+- Multi-step registration form (/cadastro) 4 steps:
+    1. CPF validated against the backend before advancing (instant feedback if already registered).
+    2. Personal data name, e-mail (validated against the backend), phone, date of birth, password.
+    3. Delivery address CEP field triggers an automatic lookup via the ViaCEP public API, pre-filling street, neighbourhood, city and state.
+    4. Review summary of all entered data before submitting.
+- After registration, a confirmation e-mail is sent with a one time token link.
+- Confirmation page (/confirmar-email) validates the token and activates the account.
+- The delivery address entered during registration is saved to localStorage and automatically created server side on the customer's first login (after e-mail confirmation), so no data is lost between registration and the first session.
+- Support for the admin created customer flow: customers registered through the Back Office receive an e-mail with a link to set their first password (/definir-senha), which also confirms their e-mail in the same step.
 
 
 Authentication
-
 - Login page (/login) issuing a JWT from the backend on successful authentication.
-- Token persisted in localStorage and automatically attached to every outgoing HTTP request via an HTTP Interceptor (no need to set headers manually in each service).
-- Navbar reacts to authentication state: shows "Entrar" for guests, the customer's name and a logout option once authenticated.
-- Route guards: a guest guard keeps logged-in users out of /login and /cadastro (redirecting to the catalog), and an auth guard is in place to protect future account-only pages (e.g. order history), redirecting unauthenticated users to /login.
-- On login, the guest cart (identified by the session UUID) is merged into the customer's cart on the backend, so items added anonymously are preserved.        
+- Token persisted in localStorage and automatically attached to every outgoing HTTP request via an HTTP Interceptor.
+- Navbar reacts to authentication state: shows "Entrar" for guests. Shows the customer's name with a dropdown menu (Minha Conta, Meus Pedidos, Sair) once authenticated.
+- Route guards: a guest guard keeps logged in users out of /login and /cadastro (redirecting to the catalog). An auth guard protects account and order pages, redirecting unauthenticated users to /login.
+- On login, the guest cart is merged into the customer's server-side cart.        
+
+
+Customer Account
+- Minha Conta page (/minha-conta) protected by auth guard.
+- View and edit delivery address.
+- CEP auto fill via ViaCEP on the address form.
+- Add address button only shown when no address exists yet (one address per customer model).
+
+
+Checkout & Orders
+- Checkout page (/checkout) protected by auth guard:
+    - Displays all cart items with quantities and subtotals.
+    - Shows the registered delivery address (redirects to Minha Conta if none is set).
+    - "Confirm Order" button disabled if cart is empty or no address is set.
+    - On confirmation, the backend validates stock availability, creates the order with data snapshots, debits stock, clears the cart, and sends an order confirmation e-mail.
+    - Clear per item error messages if any product has insufficient stock.
+- Order confirmation screen after successful checkout, with a link to Meus Pedidos.
+- Meus Pedidos page (/meus-pedidos) protected by auth guard:
+    - Full order history, newest first.
+    - Each order shows status, date, delivery address snapshot, all items with images (from snapshot data), quantities, unit prices, subtotals and order total.
+    - Images load correctly even for products that have since been removed from the catalog, because the brewery id and image filename were captured at purchase time.
+
 
 Backend Integration
-
 - Communication with Spring Boot REST API.
 - JSON based data exchange.
 - Dynamic product loading from MySQL database through the backend layer.
@@ -92,26 +114,36 @@ Backend Integration
 
 ## Architecture
 
-
 ```text
-┌──────────────────┐
-│ Angular Frontend │
-└──────┬───────────┘
-       │
-       ▼
-┌──────────────────┐
-│  REST API (JSON) │
-└──────┬───────────┘
-       │
-       ▼
-┌────────────────────┐
-│Spring Boot Backend │
-└──────┬─────────────┘
-       │
-       ▼
-┌─────────────┐
-│    MySQL    │
-└─────────────┘
+┌────────────────────────────────────────────┐
+│              Angular Frontend              │
+│                                            │
+│  ┌──────────┐  ┌──────────┐  ┌─────────┐   │
+│  │Components│  │ Services │  │ Guards  │   │
+│  └────┬─────┘  └────┬─────┘  └────┬────┘   │
+│       │             │             │        │
+│       └─────────────|─────────────┘        │
+│              HTTP Interceptor              │
+│         (attaches JWT automatically)       │
+└──────────────────┬─────────────────────────┘
+                   │ REST (JSON)
+                   │ Authorization: Bearer <JWT>
+                   |
+┌──────────────────────────────────────────┐
+│         Spring Boot REST API             │
+│      (http://localhost:8080)             │
+└──────────────────────────────────────────┘
+                   │
+                   |
+┌──────────────────────────────────────────┐
+│                 MySQL                    │
+└──────────────────────────────────────────┘
+
+External APIs consumed by the frontend:
+┌──────────────────────────────────────────┐
+│   ViaCEP (https://viacep.com.br)         │
+│   CEP lookup for address auto-fill       │
+└──────────────────────────────────────────┘
 ```
 
 
@@ -121,15 +153,21 @@ Backend Integration
 
 2. Cross-component state via query params: the search input lives in the NavbarComponent, while the country filter and price sort live in a sidebar component (FiltroLateralComponent) none of them share a parent/child relationship with the catalog list. Their state is synchronized through route query parameters rather than a shared service, following the same pattern used by real world e-commerce platforms (filters reflected in the URL, shareable and bookmarkable).
 
-3. Sorting across a collection relationship (backend): beer price lives on the related Estoque (stock) entity, not directly on Cerveja. Spring Data's automatic Sort/Pageable resolution can't navigate through a @OneToMany collection to order by a field on it (PathException: Plural path ... refers to a collection). This was solved with explicit JPQL queries ordering by the joined entity's field (ORDER BY e.preco) instead of relying on automatic sort resolution.
+3. Sorting across a collection relationship (backend): beer price lives on the related Estoque entity, not directly on Cerveja. Spring Data's automatic Sort/Pageable resolution can't navigate through a @OneToMany collection (PathException: Plural path  refers to a collection). Solved with explicit JPQL queries ordering by the joined entity's field (ORDER BY e.preco).
 
-4. SSR and browser only APIs: Angular SSR (Server-Side Rendering) runs part of the application on Node.js before it reaches the browser, where APIs like localStorage and window don't exist. The cart's session identifier logic checks typeof window !== 'undefined' before touching localStorage, preventing a ReferenceError during server side rendering.
+4. SSR and browser-only APIs: Angular SSR runs part of the application on Node.js before it reaches the browser, where localStorage and window don't exist. All access to localStorage is guarded by typeof window !== 'undefined', preventing ReferenceError during server side rendering. This applies to the cart session id, the auth token, and the pending address saved after registration.
 
-5. Guest cart persistence: since customer login/registration is not implemented yet, the cart is tied to a randomly generated session UUID (crypto.randomUUID()) stored in localStorage, and persisted server side in a carrinho table keyed by that session id. This mirrors how real e-commerce platforms handle guest carts, and is designed to be merged into a user account once authentication is added.
+5. Guest cart persistence and merge on login: the cart is tied to a randomly generated session UUID stored in localStorage and persisted server side. On login, the frontend calls a dedicated backend endpoint to merge that session's cart into the authenticated customer's cart. Verified across two different browsers acting as two separate devices.
 
-6. SSR double execution on side effectful requests: components that trigger a one time, non idempotent backend call (such as /confirmar-email, which consumes a single-use token) can hit a subtle SSR pitfall: the component runs once on the server (to render initial HTML) and once again in the browser during hydration. Calling the API directly in the constructor caused it to fire twice the server side call succeeded and consumed the token, while the browser side call immediately after failed because the token no longer existed, overwriting the success message with an error. The fix mirrors the localStorage guard above: side effectful calls are skipped entirely when typeof window === 'undefined', ensuring they only run once, in the browser.
+6. SSR double execution on side effectful requests: components that trigger a one time, non idempotent backend call (such as /confirmar-email, which consumes a single-use token) can hit a subtle SSR pitfall: the component runs once on the server and once again in the browser during hydration. The server-side call consumed the token. The browser side call failed immediately after, overwriting the success state with an error. Fixed by skipping side effectful calls entirely when typeof window 'undefined'.
 
-7. Centralized token handling via HTTP Interceptor: rather than manually attaching the JWT to each service's HTTP calls, a functional HttpInterceptorFn reads the token from AuthService and adds the Authorization: Bearer header to every outgoing request. This keeps authentication concerns out of individual services and ensures any new service automatically sends the token without extra wiring.
+7. Centralized token handling via HTTP Interceptor: a functional HttpInterceptorFn reads the JWT from AuthService and adds the Authorization: Bearer header to every outgoing request automatically, keeping authentication concerns out of individual services.
+
+8. crypto.randomUUID() fallback for non-secure contexts: crypto.randomUUID() requires a secure context (HTTPS or localhost). When accessing the app via a local network IP (http://192.168.x.x), browsers block this API. A fallback using Date.now() and Math.random() is used when the native API is unavailable, ensuring the cart session UUID is always generated regardless of the access context.
+
+9. Local network development setup: to allow testing from other devices on the same network, the Angular dev server is configured with host: "0.0.0.0" and the allowed hosts list in angular.json. The Spring Boot backend CORS configuration accepts requests from both localhost:4200 and the LAN IP.
+
+10. Order image resolution from snapshots: order history images are resolved using the brewery id captured at purchase time (not the product id), since the backend serves images at /uploads/images/{cervejaria_id}/{filename}. Storing both the cerveja_id and cervejaria_id in the order snapshot ensures images load correctly even for products that no longer exist in the catalog.
 
 
 ## Project Status
@@ -139,24 +177,29 @@ This project is currently under active development.
 Implemented:
 - Product catalog with pagination.
 - Product search (debounced, via navbar + query params).
-- Country filter and price sorting (sidebar).
+- Country filter and price sorting (sidebar + mobile offcanvas).
 - Product detail page.
-- Shopping cart (guest session, add/update/remove items, mini-cart + dedicated page).
-- JWT-based login/logout HTTP Interceptor for automatic token attachment.
-- Route guards (guest guard and auth guard)
-- Guest cart merge into customer account on login
-- Customer self registration with e-mail confirmation First password setup flow for admin created customers.
+- Shopping cart with real-time stock limit enforcement.
+- Guest session cart (persistent, UUID-based).
+- Cart merge into customer account on login.
+- Multi-step customer registration with CPF/email validation and ViaCEP address auto-fill.
+- E-mail confirmation flows (self-registered and admin-created customers)
+- JWT-based login/logout.
+- HTTP Interceptor for automatic token attachment.
+- Route guards (guest guard and auth guard).
+- Customer account page with address management.
+- Checkout with stock validation and order confirmation e-mail.
+- Order history with product snapshots and images.
 - Backend integration with centralized environment configuration.
-- HTTP error handling on catalog and cart requests.
-- Angular routing.
+- HTTP error handling on all requests.
+- Responsive layout (mobile navbar, offcanvas filters).
     
 
 Planned Features:
-- Home page redesign.
-- Customer account page (order history, profile)
-- Checkout flow.
-- Order management.
-- Responsive interface improvements.
+- Order status tracking
+- Payment gateway integration
+- Customer profile editing
+- Product reviews
 
 
 ## Screenshots

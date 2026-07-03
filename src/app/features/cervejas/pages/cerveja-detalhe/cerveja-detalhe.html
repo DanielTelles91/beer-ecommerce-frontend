@@ -9,7 +9,6 @@
       <div class="product-images">
         <div class="main-image">
           <button class="nav-btn left" (click)="anterior()">‹</button>
-
           <img class="product-img" [src]="getImagemUrl(cerveja)" alt="{{ cerveja.rotulo }}" />
           <button class="nav-btn right" (click)="proxima()">›</button>
         </div>
@@ -22,7 +21,6 @@
           <div>{{ cerveja.cervejaria.cervejaria }}</div>
           <div>{{ cerveja.cervejaria.pais }}</div>
         </div>
-
 
         <!-- Sub Info -->
         <div class="badges">
@@ -42,7 +40,7 @@
         </p>
 
         <!-- Botão Compra -->
-        <button class="buy-btn" [disabled]="!cerveja.disponibilidade">
+        <button class="buy-btn" (click)="adicionarAoCarrinho(cerveja.id)" [disabled]="!cerveja.disponibilidade">
           Adicionar ao carrinho
         </button>
 
@@ -70,7 +68,6 @@
         {{ cerveja.descricao }}
       </p>
     </div>
-
   </ng-container>
 
   <!-- Carregamento -->

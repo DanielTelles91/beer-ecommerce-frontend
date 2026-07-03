@@ -24,12 +24,16 @@ export class CarrinhoService {
 
     }
 
-    private obterOuCriarSessionId(): string {
-
+    private obterOuCriarSessionId(): string { // mod p/ funcionar em outros pc da rede, HTTPS 
         let id = localStorage.getItem('cart_session_id');
 
         if (!id) {
-            id = crypto.randomUUID();
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                id = window.crypto.randomUUID();
+            } else {
+                id = Date.now().toString(36) + Math.random().toString(36).substring(2);
+            }
+
             localStorage.setItem('cart_session_id', id);
         }
 
