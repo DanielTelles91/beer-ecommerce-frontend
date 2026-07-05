@@ -12,6 +12,7 @@ import { MinhaContaComponent } from './features/auth/pages/minha-conta/minha-con
 import { AguardandoConfirmacaoComponent } from './features/auth/pages/cadastro/aguardando-confirmacao';
 import { CheckoutComponent } from './features/pedidos/pages/checkout/checkout';
 import { MeusPedidosComponent } from './features/pedidos/pages/meus-pedidos/meus-pedidos';
+import { ListaDesejosComponent } from './features/lista-desejos/pages/lista-desejos/lista-desejos';
 
 
 
@@ -31,7 +32,8 @@ export const routes: Routes = [
   { path: 'minha-conta', component: MinhaContaComponent, canActivate: [authGuard] },
   { path: 'aguardando-confirmacao', component: AguardandoConfirmacaoComponent },
   { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
-  { path: 'meus-pedidos', component: MeusPedidosComponent, canActivate: [authGuard] }
+  { path: 'meus-pedidos', component: MeusPedidosComponent, canActivate: [authGuard] },
+  { path: 'lista-desejos', component: ListaDesejosComponent, canActivate: [authGuard] }
 
 
 ];

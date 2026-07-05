@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { catchError, throwError } from 'rxjs';
+import { ListaDesejosService } from '../../lista-desejos/services/lista-desejos.service';
 
 
 interface Usuario {
@@ -16,7 +17,7 @@ export class AuthService {
 
   usuario = signal<Usuario | null>(null);
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private listaService: ListaDesejosService) {
     if (typeof window !== 'undefined') {
       this.restaurarSessao();
     }
@@ -30,6 +31,7 @@ export class AuthService {
 
     if (token && nome && email) {
       this.usuario.set({ nome, email });
+      this.listaService.carregarFavoritos();
     }
   }
 
@@ -53,6 +55,7 @@ export class AuthService {
     localStorage.setItem('auth_email', email);
     this.usuario.set({ nome, email });
     this.criarEnderecoPendente();
+    this.listaService.carregarFavoritos();
   }
 
   private criarEnderecoPendente() {
@@ -77,6 +80,7 @@ export class AuthService {
     localStorage.removeItem('auth_nome');
     localStorage.removeItem('auth_email');
     this.usuario.set(null);
+    this.listaService.idsFavoritos.set(new Set());
   }
 
   estaLogado(): boolean {
@@ -115,4 +119,11 @@ export class AuthService {
     );
   }
 
+  buscarPerfil() {
+    return this.http.get<any>(`${this.apiUrl}/me`);
+  }
+
+  editarPerfil(dto: any) {
+    return this.http.put<any>(`${this.apiUrl}/me`, dto);
+  }
 }

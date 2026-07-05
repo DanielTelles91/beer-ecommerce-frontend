@@ -45,8 +45,10 @@
         </button>
 
         <!-- Botão  Add Favoritos -->
-        <button class="fav-btn">
-          Adicionar ao Favorito
+        <button class="btn btn-outline-danger w-100" (click)="toggleFavorito(cerveja.id)">
+          {{ listaService.estaFavorito(cerveja.id)
+          ? '❤️ Remover dos Favoritos'
+          : '🤍 Adicionar aos Favoritos' }}
         </button>
 
         <!-- Ficha Técnica -->
