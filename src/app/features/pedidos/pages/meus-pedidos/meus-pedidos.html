@@ -1,25 +1,52 @@
 <div class="container" style="margin-top: 90px; max-width: 700px;">
     <h2 class="mb-4">Meus Pedidos</h2>
+
     <div *ngIf="erro()" class="alert alert-danger">{{ erro() }}</div>
+
     <div *ngIf="pedidos().length === 0 && !erro()" class="text-center py-5">
         <p class="text-muted">Você ainda não fez nenhum pedido.</p>
         <a routerLink="/cervejas" class="btn btn-outline-success">Explorar cervejas</a>
     </div>
+
     <div class="card mb-3" *ngFor="let pedido of pedidos()">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
+
+            <!-- 1: número do pedido + botão detalhes -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <strong>Pedido #{{ pedido.id }}</strong>
                     <span class="text-muted small ms-2">
                         {{ pedido.dataPedido | date:'dd/MM/yyyy HH:mm' }}
                     </span>
                 </div>
-                <span class="badge bg-success">{{ pedido.status }}</span>
+                <button class="btn btn-sm btn-outline-secondary" (click)="togglePedido(pedido.id)">
+                    {{ pedidoExpandido() === pedido.id ? '▲ Ocultar' : '▼ Detalhes' }}
+                </button>
             </div>
-            <button class="btn btn-sm btn-outline-secondary" (click)="togglePedido(pedido.id)">
-                {{ pedidoExpandido() === pedido.id ? '▲ Ocultar' : '▼ Detalhes' }}
-            </button>
-            <div *ngIf="pedidoExpandido() === pedido.id">
+
+            <!-- 2: timeline -->
+            <div class="timeline mt-2 mb-1" *ngIf="pedido.status !== 'CANCELADO'">
+                <div class="timeline-step" *ngFor="let etapa of getEtapas(pedido)" [class.ativo]="etapa.ativo"
+                    [class.atual]="etapa.atual">
+                    <div class="timeline-icon">
+                        <i [class]="'bi ' + etapa.icone"></i>
+                    </div>
+                    <div class="timeline-label">{{ etapa.label }}</div>
+                    <div class="timeline-data" *ngIf="etapa.data">
+                        {{ etapa.data | date:'dd/MM HH:mm' }}
+                    </div>
+                </div>
+            </div>
+
+            <span *ngIf="pedido.status === 'CANCELADO'" class="badge bg-danger mt-1">
+                Cancelado
+                <span *ngIf="getDataCancelado(pedido)" class="ms-1 fw-normal">
+                    — {{ getDataCancelado(pedido) | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+            </span>
+
+            <!-- 3: detalhes expandidos -->
+            <div *ngIf="pedidoExpandido() === pedido.id" class="mt-3">
                 <div *ngFor="let item of pedido.itens" class="d-flex align-items-center gap-3 mb-2">
                     <img [src]="getImagemUrl(item.cervejariaId!, item.imagem)"
                         style="width:50px; height:50px; object-fit:cover; border-radius:4px;" *ngIf="item.imagem" />
@@ -28,17 +55,19 @@
                         <div class="text-muted small">{{ item.nomeCervejaria }}</div>
                     </div>
                     <div class="text-end">
-                        <div class="small text-muted">{{ item.quantidade }}x R$ {{ item.precoUnitario | number:'1.2-2'
-                            }}
+                        <div class="small text-muted">
+                            {{ item.quantidade }}x R$ {{ item.precoUnitario | number:'1.2-2' }}
                         </div>
                         <div><strong>R$ {{ item.subtotal | number:'1.2-2' }}</strong></div>
                     </div>
                 </div>
+
                 <div class="border-top pt-2 mt-2 d-flex justify-content-between">
                     <span class="text-muted small">{{ pedido.enderecoCompleto }}</span>
                     <strong>Total: R$ {{ pedido.total | number:'1.2-2' }}</strong>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

@@ -43,4 +43,34 @@ export class MeusPedidosComponent implements OnInit {
             this.pedidoExpandido.set(id);
         }
     }
+
+
+    readonly ETAPAS = [
+        { status: 'CONFIRMADO', icone: 'bi-patch-check-fill', label: 'Confirmado' },
+        { status: 'SEPARANDO_PRODUTOS', icone: 'bi-box-seam-fill', label: 'Separando' },
+        { status: 'ENVIADO', icone: 'bi-truck', label: 'Enviado' },
+        { status: 'ENTREGUE', icone: 'bi-house-check-fill', label: 'Entregue' }
+    ];
+
+    getEtapas(pedido: Pedido) {
+        const indexAtual = this.ETAPAS.findIndex(e => e.status === pedido.status);
+
+        return this.ETAPAS.map((etapa, index) => {
+            // busca a data no histórico pra essa etapa
+            const entrada = pedido.historico?.find(h => h.status === etapa.status);
+
+            return {
+                ...etapa,
+                ativo: index <= indexAtual,
+                atual: index === indexAtual,
+                data: entrada ? entrada.dataMudanca : null
+            };
+        });
+    }
+
+    getDataCancelado(pedido: Pedido): string | null {
+        const entrada = pedido.historico?.find(h => h.status === 'CANCELADO');
+        return entrada ? entrada.dataMudanca : null;
+    }
+
 }

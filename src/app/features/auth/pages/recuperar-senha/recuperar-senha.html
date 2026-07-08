@@ -1,0 +1,35 @@
+<div class="container d-flex justify-content-center" style="margin-top: 100px;">
+    <div class="card p-4" style="max-width: 400px; width: 100%;">
+
+        <h3 class="mb-3">Recuperar senha</h3>
+
+        <div *ngIf="enviado()" class="alert alert-success">
+             Se este e-mail estiver cadastrado, você receberá as instruções em breve.
+            <div class="mt-2">
+                <a routerLink="/login" class="btn btn-outline-success btn-sm">Voltar ao login</a>
+            </div>
+        </div>
+
+        <form *ngIf="!enviado()">
+            <p class="text-muted small mb-3">
+                Informe seu e-mail cadastrado e enviaremos um link para redefinir sua senha.
+            </p>
+
+            <div class="mb-3">
+                <label class="form-label">E-mail</label>
+                <input type="email" class="form-control" [formControl]="emailControl" placeholder="seu@email.com" />
+            </div>
+
+            <div *ngIf="erro()" class="alert alert-danger py-2">{{ erro() }}</div>
+
+           <button type="button" class="btn btn-success w-100" (click)="enviar()" [disabled]="carregando()">
+  {{ carregando() ? 'Enviando...' : 'Enviar link de recuperação' }}
+</button>
+
+            <p class="text-center mt-3 mb-0 small">
+                Lembrou a senha? <a routerLink="/login">Voltar ao login</a>
+            </p>
+        </form>
+
+    </div>
+</div>

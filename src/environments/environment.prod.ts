@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://sua-api-em-producaouhu.com'
+    apiUrl: 'https://beer-ecommerce-platform.onrender.com/'
 };

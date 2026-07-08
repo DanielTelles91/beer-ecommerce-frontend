@@ -13,7 +13,8 @@ import { AguardandoConfirmacaoComponent } from './features/auth/pages/cadastro/a
 import { CheckoutComponent } from './features/pedidos/pages/checkout/checkout';
 import { MeusPedidosComponent } from './features/pedidos/pages/meus-pedidos/meus-pedidos';
 import { ListaDesejosComponent } from './features/lista-desejos/pages/lista-desejos/lista-desejos';
-
+import { RecuperarSenhaComponent } from './features/auth/pages/recuperar-senha/recuperar-senha';
+import { NovaSenhaComponent } from './features/auth/pages/nova-senha/nova-senha';
 
 
 
@@ -33,7 +34,9 @@ export const routes: Routes = [
   { path: 'aguardando-confirmacao', component: AguardandoConfirmacaoComponent },
   { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
   { path: 'meus-pedidos', component: MeusPedidosComponent, canActivate: [authGuard] },
-  { path: 'lista-desejos', component: ListaDesejosComponent, canActivate: [authGuard] }
+  { path: 'lista-desejos', component: ListaDesejosComponent, canActivate: [authGuard] },
+  { path: 'recuperar-senha', component: RecuperarSenhaComponent, canActivate: [guestGuard] },
+  { path: 'nova-senha', component: NovaSenhaComponent }
 
 
 ];

@@ -10,6 +10,11 @@ export interface ItemPedido {
     cervejariaId: number;
 }
 
+export interface HistoricoStatus {
+    status: string;
+    dataMudanca: string;
+}
+
 export interface Pedido {
     id: number;
     dataPedido: string;
@@ -17,4 +22,5 @@ export interface Pedido {
     total: number;
     enderecoCompleto: string;
     itens: ItemPedido[];
+    historico: HistoricoStatus[];
 }

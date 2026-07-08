@@ -1,0 +1,26 @@
+<div class="container d-flex justify-content-center" style="margin-top: 100px;">
+    <div class="card p-4" style="max-width: 400px; width: 100%;">
+
+        <h3 class="mb-3">Nova senha</h3>
+
+        <div *ngIf="sucesso()" class="alert alert-success">
+            Senha redefinida com sucesso! Redirecionando para o login...
+        </div>
+
+        <form *ngIf="!sucesso()" [formGroup]="form">
+            <div class="mb-3">
+                <label class="form-label">Nova senha</label>
+                <input type="password" class="form-control" formControlName="senha" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Confirmar senha</label>
+                <input type="password" class="form-control" formControlName="confirmarSenha" />
+            </div>
+            <div *ngIf="erro()" class="alert alert-danger">{{ erro() }}</div>
+            <button class="btn btn-success w-100" (click)="confirmar()" [disabled]="carregando()">
+                {{ carregando() ? 'Salvando...' : 'Confirmar nova senha' }}
+            </button>
+        </form>
+
+    </div>
+</div>

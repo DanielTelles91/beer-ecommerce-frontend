@@ -126,4 +126,20 @@ export class AuthService {
   editarPerfil(dto: any) {
     return this.http.put<any>(`${this.apiUrl}/me`, dto);
   }
+
+  recuperarSenha(email: string) {
+    return this.http.post(
+      `${this.apiUrl}/recuperar-senha?email=${encodeURIComponent(email)}`,
+      {},
+      { responseType: 'text' }
+    );
+  }
+
+  novaSenha(token: string, novaSenha: string) {
+    return this.http.post(
+      `${this.apiUrl}/nova-senha?token=${token}&novaSenha=${encodeURIComponent(novaSenha)}`,
+      {},
+      { responseType: 'text' }
+    );
+  }
 }

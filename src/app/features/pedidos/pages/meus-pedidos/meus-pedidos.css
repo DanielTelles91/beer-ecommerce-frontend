@@ -1,0 +1,103 @@
+.timeline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between; /* distribui igualmente */
+  position: relative;
+  padding: 8px 16px; /* adiciona padding lateral */
+  width: 100%;
+}
+
+/* linha conectora entre etapas */
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: #dee2e6;
+    z-index: 0;
+}
+
+.timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1; /* cada etapa ocupa espaço igual */
+  position: relative;
+  z-index: 1;
+  min-width: 0; /* permite que o flex quebre corretamente */
+}
+
+.timeline-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border: 2px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.timeline-label {
+  font-size: 11px;
+  color: #adb5bd;
+  margin-top: 4px;
+  text-align: center;
+  white-space: nowrap; /* evita quebra de linha */
+}
+
+/* etapa já concluída */
+.timeline-step.ativo .timeline-icon {
+    background: #d1e7dd;
+    border-color: #198754;
+}
+
+.timeline-step.ativo .timeline-label {
+    color: #198754;
+    font-weight: 500;
+}
+
+/* etapa atual — destaque maior */
+.timeline-step.atual .timeline-icon {
+    background: #198754;
+    border-color: #146c43;
+    box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.2);
+    font-size: 18px;
+}
+
+.timeline-step.atual .timeline-label {
+    color: #198754;
+    font-weight: 700;
+}
+
+/* linha colorida até a etapa atual */
+.timeline-step.ativo::before {
+    content: '';
+    position: absolute;
+    top: 17px;
+    left: -50%;
+    width: 100%;
+    height: 2px;
+    background: #198754;
+    z-index: -1;
+}
+
+.timeline-step:first-child::before {
+    display: none;
+}
+
+.timeline-data {
+  font-size: 10px;
+  color: #6c757d;
+  margin-top: 2px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.timeline-step.ativo .timeline-data {
+  color: #198754;
+}
