@@ -38,6 +38,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -69,7 +75,7 @@
               "127.0.0.1",
               "192.168.1.131"
             ]
-          }, 
+          },
           "configurations": {
             "production": {
               "buildTarget": "beer-ecommerce-frontend:build:production"
