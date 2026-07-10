@@ -19,7 +19,7 @@
         <div *ngIf="erro()" class="alert alert-danger">{{ erro() }}</div>
 
         <!-- Passo 1: CPF -->
-        <div *ngIf="passo() === 1"> 
+        <div *ngIf="passo() === 1">
             <h5 class="mb-3">Informe seu CPF</h5>
             <form [formGroup]="formCpf">
                 <div class="mb-3">
@@ -40,32 +40,79 @@
         <div *ngIf="passo() === 2">
             <h5 class="mb-3">Seus dados</h5>
             <form [formGroup]="formDados">
-                <div class="row mb-2">
-                    <div class="col"><input class="form-control" placeholder="Nome" formControlName="first_name" />
+
+                <!-- Nome / Sobrenome -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nome</label>
+                        <input class="form-control" formControlName="first_name" placeholder="João" maxlength="30">
                     </div>
-                    <div class="col"><input class="form-control" placeholder="Sobrenome" formControlName="last_name" />
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Sobrenome</label>
+                        <input class="form-control" formControlName="last_name" placeholder="Silva" maxlength="50">
                     </div>
                 </div>
-                <div class="mb-2"><input class="form-control" placeholder="E-mail" formControlName="email" /></div>
-                <div class="mb-2"><input class="form-control" placeholder="Telefone" formControlName="telefone" /></div>
-                <div class="mb-2"><input class="form-control" type="date" formControlName="data_nascimento" /></div>
-                <div class="mb-2">
-                    <select class="form-control" formControlName="sexo">
-                        <option value="">Sexo</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Feminino">Feminino</option>
-                    </select>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label">E-mail</label>
+                    <input class="form-control" formControlName="email" placeholder="nome@exemplo.com" maxlength="50">
                 </div>
-                <div class="mb-2"><input class="form-control" type="password" placeholder="Senha (mín. 6 caracteres)"
-                        formControlName="senha" /></div>
-                <div class="mb-3"><input class="form-control" type="password" placeholder="Confirmar senha"
-                        formControlName="confirmarSenha" /></div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary" (click)="voltar()">Voltar</button>
-                    <button class="btn btn-success flex-fill" (click)="avancarPasso2()" [disabled]="carregando()">
+
+                <!-- Telefone / Sexo -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Telefone</label>
+                        <input class="form-control" formControlName="telefone" placeholder="(11) 98765-4321"
+                            (input)="formatarTelefone($event)" maxlength="15">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Sexo</label>
+                        <select class="form-select" formControlName="sexo">
+                            <option value="">Selecione</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Data de nascimento -->
+                <div class="mb-3">
+                    <label class="form-label">Data de nascimento</label>
+                    <input class="form-control" type="date" formControlName="data_nascimento">
+                </div>
+
+                <!-- Senhas -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Senha</label>
+                        <input class="form-control" type="password" formControlName="senha"
+                            placeholder="Mínimo de 6 caracteres" maxlength="15">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Confirmar senha</label>
+                        <input class="form-control" type="password" formControlName="confirmarSenha"
+                            placeholder="Digite novamente" maxlength="15">
+                    </div>
+                </div>
+
+                <!-- Botões -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="button" class="btn btn-outline-secondary" (click)="voltar()">
+                        Voltar
+                    </button>
+
+                    <button type="button" class="btn btn-success flex-fill" (click)="avancarPasso2()"
+                        [disabled]="carregando()">
+
                         {{ carregando() ? 'Verificando...' : 'Continuar' }}
+
                     </button>
                 </div>
+
             </form>
         </div>
 
@@ -73,40 +120,70 @@
         <div *ngIf="passo() === 3">
             <h5 class="mb-3">Endereço de entrega</h5>
             <form [formGroup]="formEndereco">
-                <div class="row mb-2">
-                    <div class="col-md-5">
-                        <input class="form-control" placeholder="CEP" formControlName="cep" (blur)="buscarCep()" />
+
+                <div class="mb-3">
+                    <label class="form-label">CEP</label>
+                    <input class="form-control" placeholder="Digite seu CEP" formControlName="cep"
+                        (input)="formatarCep($event)" (blur)="buscarCep()" maxlength="9">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tipo de logradouro</label>
+                      <select class="form-control" formControlName="tipo_logradouro">
+                        <option value="Rua">Rua</option>
+                        <option value="Avenida">Avenida</option>
+                        <option value="Travessa">Travessa</option>
+                        <option value="Alameda">Alameda</option>
+                        <option value="Praça">Praça</option>
+                        <option value="Rodovia ">Rodovia</option>
+                        <option value="Estrada ">Estrada</option>
+                    </select>                   
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Logradouro</label>
+                    <input class="form-control" placeholder="Digite a Rua" formControlName="logradouro">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Número</label>
+                    <input class="form-control" placeholder="Digite o número" formControlName="logradouro_numero">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Complemento</label>
+                    <input class="form-control" placeholder="Digite o Complemento, bloco, referência (opcional)"
+                        formControlName="complemento">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Bairro</label>
+                    <input class="form-control" placeholder="Digite o Bairro" formControlName="bairro">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-9 mb-3">
+                        <label class="form-label">Cidade</label>
+                        <input class="form-control" placeholder="Digite a Cidade" formControlName="cidade">
                     </div>
-                    <div class="col-md-3">
-                        <input class="form-control" placeholder="Tipo" formControlName="tipo_logradouro" />
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control" placeholder="Logradouro" formControlName="logradouro" />
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">UF</label>
+                        <input class="form-control text-uppercase" placeholder="UF" formControlName="estado"
+                            maxlength="2">
                     </div>
                 </div>
-                <div class="row mb-2">
-                    <div class="col-md-3">
-                        <input class="form-control" placeholder="Número" formControlName="logradouro_numero" />
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control" placeholder="Complemento" formControlName="complemento" />
-                    </div>
-                    <div class="col-md-5">
-                        <input class="form-control" placeholder="Bairro" formControlName="bairro" />
-                    </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="button" class="btn btn-outline-secondary" (click)="voltar()">
+                        Voltar
+                    </button>
+
+                    <button type="button" class="btn btn-success flex-fill" (click)="avancarPasso3()">
+                        Continuar
+                    </button>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-8">
-                        <input class="form-control" placeholder="Cidade" formControlName="cidade" />
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control" placeholder="UF" formControlName="estado" maxlength="2" />
-                    </div>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary" (click)="voltar()">Voltar</button>
-                    <button class="btn btn-success flex-fill" (click)="avancarPasso3()">Continuar</button>
-                </div>
+
             </form>
         </div>
 

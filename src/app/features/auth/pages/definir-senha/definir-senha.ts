@@ -32,7 +32,7 @@ export class DefinirSenhaComponent {
     this.token = this.route.snapshot.queryParams['token'] || '';
 
     if (!this.token) {
-      this.erro.set('Link inválido — token não encontrado na URL.');
+      this.erro.set('Link inválido. Token não encontrado na URL.');
     }
   }
 

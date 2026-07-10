@@ -19,7 +19,7 @@ export class ConfirmarEmailComponent {
     constructor(private route: ActivatedRoute, private authService: AuthService) {
 
         if (typeof window === 'undefined') {
-            return; // não executa durante SSR (servidor)
+            return; 
         }
 
         const token = this.route.snapshot.queryParams['token'] || '';

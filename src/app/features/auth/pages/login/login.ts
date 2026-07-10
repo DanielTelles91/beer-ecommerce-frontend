@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router'; 
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { CarrinhoService } from '../../../carrinho/services/carrinho.service';
@@ -43,7 +43,7 @@ export class LoginComponent {
         this.authService.login(email!, senha!).subscribe({
             next: (res) => {
                 this.authService.salvarSessao(res.token, res.nome, res.email);
-                this.carrinhoService.mergeCarrinho(); // <- chama o merge
+                this.carrinhoService.mergeCarrinho(); // Mesclagem do carrinho de visitante ao realizar login
                 this.carregando.set(false);
                 this.router.navigate(['/cervejas']);
             },

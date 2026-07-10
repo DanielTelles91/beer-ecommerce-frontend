@@ -30,7 +30,7 @@ export class MinhaContaComponent implements OnInit {
         sexo: new FormControl('')
     });
 
-    // --- endereço (igual antes) ---
+    // --- endereço ---
     enderecos = signal<Endereco[]>([]);
     editandoEnderecoId = signal<number | null>(null);
     adicionando = signal(false);
@@ -118,7 +118,7 @@ export class MinhaContaComponent implements OnInit {
         });
     }
 
-    // ENDEREÇO  
+      
 
     carregarEnderecos() {
         this.enderecoService.listar()
@@ -190,4 +190,29 @@ export class MinhaContaComponent implements OnInit {
             }
         });
     }
+
+    formatarTelefone(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    let valor = input.value.replace(/\D/g, '');
+
+    valor = valor
+        .replace(/^(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+        .substring(0, 15);
+
+    this.formPerfil.get('telefone')?.setValue(valor, { emitEvent: false });
+}
+
+formatarCep(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    let valor = input.value.replace(/\D/g, '');
+
+    valor = valor
+        .replace(/^(\d{5})(\d)/, '$1-$2')
+        .substring(0, 9);
+
+    this.formEndereco.get('cep')?.setValue(valor, { emitEvent: false });
+}
 }

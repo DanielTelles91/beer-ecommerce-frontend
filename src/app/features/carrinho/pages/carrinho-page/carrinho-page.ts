@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CarrinhoService } from '../../services/carrinho.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
     selector: 'app-carrinho-page',
@@ -12,6 +13,8 @@ import { CarrinhoService } from '../../services/carrinho.service';
 })
 export class CarrinhoPageComponent {
 
+    apiUrl = environment.apiUrl;
+
     constructor(public carrinhoService: CarrinhoService) { }
 
     aumentar(itemId: number, quantidadeAtual: number) {
@@ -19,7 +22,7 @@ export class CarrinhoPageComponent {
     }
 
     diminuir(itemId: number, quantidadeAtual: number) {
-        // se chegar a 0, o backend já remove o item (lembra da regra no CarrinhoService)
+        // se chegar a 0, o backend já remove o item 
         this.carrinhoService.atualizarQuantidade(itemId, quantidadeAtual - 1);
     }
 
@@ -27,8 +30,11 @@ export class CarrinhoPageComponent {
         this.carrinhoService.removerItem(itemId);
     }
 
-    finalizarCompra() {
-        alert('Checkout ainda não implementado — em breve!');
-        // futuramente: this.router.navigate(['/checkout']);
+   
+    getImagemUrl(cervejariaId: number, imagem: string): string {
+        if (!imagem) return '';
+        if (imagem.startsWith('http')) return imagem;
+        return `${this.apiUrl}/uploads/images/${cervejariaId}/${imagem}`;
     }
+
 }

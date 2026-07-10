@@ -26,7 +26,7 @@ export class NovaSenhaComponent {
     constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {
         if (typeof window === 'undefined') return;
         this.token = this.route.snapshot.queryParams['token'] || '';
-        if (!this.token) this.erro.set('Link inválido — token não encontrado.');
+        if (!this.token) this.erro.set('Link inválido. Token não encontrado.');
     }
 
     confirmar() {

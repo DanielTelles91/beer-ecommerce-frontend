@@ -7,10 +7,11 @@ import { EnderecoService } from '../../services/endereco.service';
 import { CarrinhoService } from '../../../carrinho/services/carrinho.service';
 import { catchError, of } from 'rxjs';
 
+
 @Component({
     selector: 'app-cadastro',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, RouterLink],
     templateUrl: './cadastro.html',
     styleUrl: './cadastro.css'
 })
@@ -149,7 +150,7 @@ export class CadastroComponent {
         this.passo.set(4);
     }
 
-    // Passo 4: cadastra cliente → loga automaticamente → cadastra endereço
+    // Passo 4: cadastra cliente -> loga automaticamente -> cadastra endereço
     confirmar() {
         this.carregando.set(true);
         this.erro.set(null);
@@ -194,4 +195,29 @@ export class CadastroComponent {
 
         this.formCpf.get('cpf')?.setValue(valor, { emitEvent: false });
     }
+
+      formatarTelefone(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    let valor = input.value.replace(/\D/g, '');
+ 
+    valor = valor
+        .replace(/^(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+        .substring(0, 15);
+
+    this.formDados.get('telefone')?.setValue(valor, { emitEvent: false });
+}
+
+formatarCep(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    let valor = input.value.replace(/\D/g, '');
+
+    valor = valor
+        .replace(/^(\d{5})(\d)/, '$1-$2')
+        .substring(0, 9);
+
+    this.formEndereco.get('cep')?.setValue(valor, { emitEvent: false });
+}
 }

@@ -6,6 +6,8 @@ export interface CarrinhoItem {
     quantidade: number;
     subtotal: number;
     estoqueDisponivel: number;
+    imagem: string;
+    cervejariaId: number;
 }
 
 export interface Carrinho {
