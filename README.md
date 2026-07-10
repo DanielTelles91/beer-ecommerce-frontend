@@ -32,6 +32,7 @@ Note: This application is hosted on Render. If it has been idle, the first reque
 
 ## Demo Video
 
+https://github.com/user-attachments/assets/3dcf73b2-45ca-4f05-a9b0-d0df862391cc
 
 
 
