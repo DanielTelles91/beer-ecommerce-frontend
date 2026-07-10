@@ -19,7 +19,16 @@ Note: This application is hosted on Render. If it has been idle, the first reque
 
 
 ## Screenshots
-
+<p align="center">
+  <img src="screenshots/1-PaginaInicial.png" width="32%">
+  <img src="screenshots/2-Pagina_Destalhes__e_minicarrinho.png" width="32%">
+  <img src="screenshots/3-Minha_Conta.png" width="32%">
+  <img src="screenshots/4-Meus_Pedidos.png" width="32%">
+  <img src="screenshots/5-Lista_de_Desejos.png" width="32%">
+  <img src="screenshots/6-Pagina_Carrinho.png" width="32%">
+  <img src="screenshots/7-Finalizar_Pedido.png" width="32%">
+  <img src="screenshots/8-Confirmacao.png" width="32%">
+</p>
 
 ## Demo Video
 
